@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace OMS.PIGSNey.Models
 {
-    public class ERPContext : DbContext
+    public class OMSContext : DbContext
     {
-        public ERPContext() { }
-        public ERPContext(DbContextOptions<ERPContext> options) : base(options) { }
+        public OMSContext() { }
+        public OMSContext(DbContextOptions<OMSContext> options) : base(options) { }
 
         public DbSet<ApplyFortb> ApplyFortb { get; set; }
         public DbSet<CommodityDetailstb> CommodityDetailstb { get; set; }
