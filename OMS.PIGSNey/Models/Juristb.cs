@@ -7,6 +7,7 @@ namespace OMS.PIGSNey.Models
 {
    public class Juristb
     {
+        public int JAdda { get; set; }
         public int JId { get; set; }
         public int RId { get; set; }
         public int JAdd { get; set; }
