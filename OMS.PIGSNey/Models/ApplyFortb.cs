@@ -6,25 +6,7 @@ using System.Text;
 
 namespace OMS.PIGSNey.Models
 {
-    public class PageAF
-    {
-        public List<AF> AF { get; set; }
-
-        /// <summary>
-        /// 总页数
-        /// </summary>
-        public int totalPage { get; set; }
-
-        /// <summary>
-        /// 总条数
-        /// </summary>
-        public int totalCount { get; set; }
-
-        /// <summary>
-        /// 页码
-        /// </summary>
-        public int PageIndex { get; set; }
-    }
+    
 
     /// <summary>
     /// 材料申请表
@@ -33,8 +15,8 @@ namespace OMS.PIGSNey.Models
     {
         [Key]
         public int AId { get; set; }
-        //材料名称
-        public string MaterialName { get; set; }
+        //材料名称/工具名称
+        public int MAId { get; set; }
         public int UId { get; set; }
         //申请数量
         public int MaterialAmount { get; set; }
