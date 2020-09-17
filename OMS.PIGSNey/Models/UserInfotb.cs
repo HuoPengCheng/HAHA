@@ -6,8 +6,10 @@ using System.Text;
 
 namespace OMS.PIGSNey.Models
 {
-    //用户表
-   public class UserInfotb
+    /// <summary>
+    /// 用户表
+    /// </summary>
+    public class UserInfotb
     {
         [Key]
         public int UId { get; set; }

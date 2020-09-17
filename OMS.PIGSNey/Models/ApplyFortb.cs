@@ -6,8 +6,10 @@ using System.Text;
 
 namespace OMS.PIGSNey.Models
 {
-    //材料申请表
-   public class ApplyFortb
+    /// <summary>
+    /// 材料申请表
+    /// </summary>
+    public class ApplyFortb
     {
         [Key]
         public int AId { get; set; }
@@ -16,5 +18,15 @@ namespace OMS.PIGSNey.Models
         public int UId { get; set; }
         //申请数量
         public int MaterialAmount { get; set; }
+
+        /// <summary>
+        /// 状态（0：未审批 1:已审批）
+        /// </summary>
+        public int AStatic { get; set; }
+
+        /// <summary>
+        /// 申请时间
+        /// </summary>
+        public DateTime AppDate { get; set; }
     }
 }
