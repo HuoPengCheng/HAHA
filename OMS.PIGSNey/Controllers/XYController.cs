@@ -31,7 +31,7 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
 
-        
+        [HttpGet]
         [Route("ApplyFortbShow")]
         public PageAF ApplyFortbShow(string MaterialName="",string UName="",int pageIndex=1,int pageSize = 2)
         {
