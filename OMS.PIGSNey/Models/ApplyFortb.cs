@@ -27,6 +27,5 @@ namespace OMS.PIGSNey.Models
         /// <summary>
         /// 申请时间
         /// </summary>
-        public DateTime AppDate { get; set; }
     }
 }
