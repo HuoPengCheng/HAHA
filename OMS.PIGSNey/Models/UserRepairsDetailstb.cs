@@ -14,7 +14,9 @@ namespace OMS.PIGSNey.Models
         //订单编号自增
         public string Ordernumber { get; set; }
         //商品类型
-        public int Type { get; set; }
+        public string Type { get; set; }
+        public int Degree { get; set; }
+
         //商品型号
         public string Marque { get; set; }
         //报修理由
@@ -24,7 +26,7 @@ namespace OMS.PIGSNey.Models
         //详细地址
         public string DetailedAddress { get; set; }
         //获取当前时间
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
         //用户Id(申请人Id)
         public int UId { get; set; }
         //状态
