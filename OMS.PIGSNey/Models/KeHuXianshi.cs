@@ -37,5 +37,8 @@ namespace OMS.PIGSNey.Models
         public string Date { get; set; }
         //状态
         public int State { get; set; }
+        public int MId { get; set; }
+        //订单Id
+        public int URDId { get; set; }
     }
 }

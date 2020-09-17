@@ -21,20 +21,41 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> KeHu(string acount)
+        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> KeHu(int uid)
         {
             var list = from u in db.UserInfotb
                        join r in db.UserRepairsDetailstb
                        on u.UId equals r.UId
                        select new KeHuXianshi()
                        {
+                           UId = u.UId,
                            UName = u.UName,
                            UAccount = u.UAccount,
                            UPhone = u.UPhone,
                            Type = r.Type,
                            Reason = r.Reason
                        };
-            list = list.Where(p => p.UAccount.Contains(acount));
+            list = list.Where(p => p.UId==uid);
+            return await list.ToListAsync();
+
+        }
+        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> WeiXui(int uid )
+        {
+            var list = from u in db.UserInfotb
+                       join r in db.UserRepairsDetailstb
+                       on u.UId equals r.UId
+                       join m in db.MaintenanceDetailstb
+                       on u.UId equals m.UId
+                       select new KeHuXianshi()
+                       {
+                           UId=m.UId,
+                           UName = u.UName,
+                           UAccount = u.UAccount,
+                           UPhone = u.UPhone,
+                           Type = r.Type,
+                           Reason = r.Reason
+                       };
+            list = list.Where(p => p.UId==uid);
             return await list.ToListAsync();
 
         }
