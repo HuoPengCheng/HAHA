@@ -39,13 +39,13 @@ namespace OMS.PIGSNey.Controllers
             return await list.ToListAsync();
 
         }
-        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> WeiXui(int uid )
+        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> WeiXui(int uid)
         {
             var list = from u in db.UserInfotb
                        join r in db.UserRepairsDetailstb
                        on u.UId equals r.UId
                        join m in db.MaintenanceDetailstb
-                       on u.UId equals m.UId
+                       on r.UrdId equals m.URDId
                        select new KeHuXianshi()
                        {
                            UId=m.UId,
@@ -60,6 +60,30 @@ namespace OMS.PIGSNey.Controllers
 
         }
         /// <summary>
+        /// 管理员查看
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> GuanLi()
+        {
+            var list = from u in db.UserInfotb
+                       join r in db.UserRepairsDetailstb
+                       on u.UId equals r.UId
+                       join m in db.MaintenanceDetailstb
+                       on r.UrdId equals m.URDId
+                       select new KeHuXianshi()
+                       {
+                           UId = m.UId,
+                           UName = u.UName,
+                           UAccount = u.UAccount,
+                           UPhone = u.UPhone,
+                           Type = r.Type,
+                           Reason = r.Reason
+                       };
+            return await list.ToListAsync();
+
+        }
+        /// <summary>
         /// 修改客户密码
         /// </summary>
         /// <param name="id"></param>
@@ -69,6 +93,18 @@ namespace OMS.PIGSNey.Controllers
         {
             UserInfotb b = db.UserInfotb.Find(id);
             b.UPwd = pwd;
+            return await db.SaveChangesAsync();
+        }
+        /// <summary>
+        /// 维修员接单
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="pwd"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>> ZhuangTai(int id, string pwd)
+        {
+            UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
+            b.State = 2;
             return await db.SaveChangesAsync();
         }
     }
