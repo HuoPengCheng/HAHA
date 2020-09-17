@@ -39,6 +39,11 @@ namespace OMS.PIGSNey.Controllers
             return await list.ToListAsync();
 
         }
+        /// <summary>
+        /// 维修员查看
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
         public async Task<ActionResult<IEnumerable<KeHuXianshi>>> WeiXui(int uid)
         {
             var list = from u in db.UserInfotb
@@ -53,9 +58,10 @@ namespace OMS.PIGSNey.Controllers
                            UAccount = u.UAccount,
                            UPhone = u.UPhone,
                            Type = r.Type,
-                           Reason = r.Reason
+                           Reason = r.Reason,
+                           State=r.State
                        };
-            list = list.Where(p => p.UId==uid);
+            list = list.Where(p => p.UId==uid &&p.State==2||p.State==3||p.State==4 );
             return await list.ToListAsync();
 
         }
@@ -83,6 +89,24 @@ namespace OMS.PIGSNey.Controllers
             return await list.ToListAsync();
 
         }
+        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> ChaoJi(int uid)
+        {
+            var list = from u in db.UserInfotb
+                       join r in db.UserRepairsDetailstb
+                       on u.UId equals r.UId
+                       select new KeHuXianshi()
+                       {
+                           UId = u.UId,
+                           UName = u.UName,
+                           UAccount = u.UAccount,
+                           UPhone = u.UPhone,
+                           Type = r.Type,
+                           Reason = r.Reason
+                       };
+            list = list.Where(p => p.UId == uid);
+            return await list.ToListAsync();
+
+        }
         /// <summary>
         /// 修改客户密码
         /// </summary>
@@ -99,12 +123,33 @@ namespace OMS.PIGSNey.Controllers
         /// 维修员接单
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="pwd"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> ZhuangTai(int id, string pwd)
+        public async Task<ActionResult<int>> ZhuangTai1(int id)
         {
             UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
             b.State = 2;
+            return await db.SaveChangesAsync();
+        }
+        /// <summary>
+        /// 维修员维修
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>> ZhuangTai2(int id)
+        {
+            UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
+            b.State = 3;
+            return await db.SaveChangesAsync();
+        }
+        /// <summary>
+        /// 维修员维完成
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>> ZhuangTai3(int id)
+        {
+            UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
+            b.State = 4;
             return await db.SaveChangesAsync();
         }
     }
