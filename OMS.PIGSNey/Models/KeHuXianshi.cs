@@ -1,22 +1,30 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OMS.PIGSNey.Models
 {
-    //用户报修信息详情表
-   public class UserRepairsDetailstb
+    public class KeHuXianshi
     {
-        [Key]
+        public int UId { get; set; }
+        //姓名
+        public string UName { get; set; }
+        //用户账号
+        public string UAccount { get; set; }
+        //用户密码
+        public string UPwd { get; set; }
+        //手机号
+        public string UPhone { get; set; }
+        //角色id
+        public int RId { get; set; }
+        //状态
+        public int UState { get; set; }
         public int UrdId { get; set; }
         //订单编号自增
         public string Ordernumber { get; set; }
         //商品类型
         public string Type { get; set; }
-        public int Degree { get; set; }
-
         //商品型号
         public string Marque { get; set; }
         //报修理由
@@ -26,10 +34,10 @@ namespace OMS.PIGSNey.Models
         //详细地址
         public string DetailedAddress { get; set; }
         //获取当前时间
-        public DateTime Date { get; set; }
-        //用户Id(申请人Id)
-        public int UId { get; set; }
+        public string Date { get; set; }
         //状态
         public int State { get; set; }
+        public int MId { get; set; }
+
     }
 }
