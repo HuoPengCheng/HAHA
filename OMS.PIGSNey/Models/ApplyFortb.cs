@@ -6,6 +6,26 @@ using System.Text;
 
 namespace OMS.PIGSNey.Models
 {
+    public class PageAF
+    {
+        public List<AF> AF { get; set; }
+
+        /// <summary>
+        /// 总页数
+        /// </summary>
+        public int totalPage { get; set; }
+
+        /// <summary>
+        /// 总条数
+        /// </summary>
+        public int totalCount { get; set; }
+
+        /// <summary>
+        /// 页码
+        /// </summary>
+        public int PageIndex { get; set; }
+    }
+
     /// <summary>
     /// 材料申请表
     /// </summary>
