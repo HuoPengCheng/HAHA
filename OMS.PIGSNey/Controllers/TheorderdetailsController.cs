@@ -125,6 +125,19 @@ namespace OMS.PIGSNey.Controllers
             return p;
         }
 
+        [HttpGet]
+        [Route("api/ShenHe")]
+        public async Task<ActionResult<int>> UpdateState(int UrdId)
+        {
+            UserRepairsDetailstb d = db.UserRepairsDetailstb.Find(UrdId);
+            d.State = 1;
+            db.Entry(d).State = EntityState.Modified;
+            return await db.SaveChangesAsync();
+        }
+
+
+
+
 
 
 
