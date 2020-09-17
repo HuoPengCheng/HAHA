@@ -11,7 +11,6 @@ namespace OMS.PIGSNey.Controllers
     [ApiController]
     public class center : ControllerBase
     {
-        //霍大帅哥
-
+        
     }
 }
