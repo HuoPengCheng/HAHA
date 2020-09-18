@@ -127,12 +127,25 @@ namespace OMS.PIGSNey.Controllers
 
         [HttpGet]
         [Route("api/ShenHe")]
-        public async Task<ActionResult<int>> UpdateState(int UrdId)
+        public async Task<ActionResult<int>> UpdateState(int UrdId,int UId)
         {
             UserRepairsDetailstb d = db.UserRepairsDetailstb.Find(UrdId);
             d.State = 1;
             db.Entry(d).State = EntityState.Modified;
-            return await db.SaveChangesAsync();
+            if (db.SaveChanges() < 0)
+            {
+                return 0;
+            }
+            else
+            {
+                Prompttb m = new Prompttb();
+                m.PromptContent = "您的订单也被审核通过";
+                m.PromptTime = DateTime.Now;
+                m.UId = UId;
+                m.UrdId=UrdId;
+                db.prompttb.Add(m);
+                return await db.SaveChangesAsync();
+            }
         }
 
 
