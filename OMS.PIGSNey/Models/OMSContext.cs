@@ -27,5 +27,10 @@ namespace OMS.PIGSNey.Models
         public DbSet<UserSubsidiarytb> UserSubsidiarytb { get; set; }
         public DbSet<Prompttb> prompttb { get; set; }
 
+        public DbSet<AddTool> AddTool { get; set; }
+
+        public DbSet<Audit> Audit { get; set; }
+
+        public DbSet<Category> Category { get; set; }
     }
 }
