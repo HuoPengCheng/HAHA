@@ -32,5 +32,7 @@ namespace OMS.PIGSNey.Models
         public DbSet<Audit> Audit { get; set; }
 
         public DbSet<Category> Category { get; set; }
+
+        public DbSet<AuditTool> AuditTool { get; set; }
     }
 }
