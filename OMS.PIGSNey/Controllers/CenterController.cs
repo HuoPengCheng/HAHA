@@ -192,7 +192,7 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> ZhuangTai1(int id)
+        public async Task<ActionResult<int>> ZhuangTai1(int id )
         {
             UserInfotb b = db.UserInfotb.Find(id);
             b.UState = 0;
