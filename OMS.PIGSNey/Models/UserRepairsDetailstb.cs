@@ -15,6 +15,7 @@ namespace OMS.PIGSNey.Models
         public string Ordernumber { get; set; }
         //商品类型
         public string Type { get; set; }
+        //维修等级
         public int Degree { get; set; }
 
         //商品型号

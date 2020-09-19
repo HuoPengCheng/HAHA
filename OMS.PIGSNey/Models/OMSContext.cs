@@ -26,6 +26,8 @@ namespace OMS.PIGSNey.Models
         public DbSet<UserRepairsDetailstb> UserRepairsDetailstb { get; set; }
         public DbSet<UserSubsidiarytb> UserSubsidiarytb { get; set; }
         public DbSet<Category> Category { get; set; }
+        public DbSet<Audit> Audit { get; set; }
 
+        public DbSet<AddTool> AddTool { get; set; }
     }
 }

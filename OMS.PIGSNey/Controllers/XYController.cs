@@ -100,12 +100,23 @@ namespace OMS.PIGSNey.Controllers
             {
                 return 0;
             }
-
+            else
+            {
+                //修改仓库数量
             Materialstb m = new Materialstb();
             var list = db.Materialstb.Where(m => m.MAId == MAId).FirstOrDefault();
             list.MAmount -= MAmount;
             db.Materialstb.Update(list);
+
+                //添加审核领取表领取时间
+                Audit a = new Audit();
+            a.AId = AId;
+            a.AuditDate = DateTime.Now;
+            db.Audit.Add(a);
             return await db.SaveChangesAsync();
+            }
+
+
         }
 
 
@@ -117,9 +128,7 @@ namespace OMS.PIGSNey.Controllers
         /// 材料申请
         /// </summary>
         /// <param name="a"></param>
-        /// <returns></returns>
-
-            
+        /// <returns></returns>   
         [Route("AddAF")]
         public async Task<ActionResult<int>> AddAF([FromBody] ApplyFortb a)
         {
@@ -131,11 +140,20 @@ namespace OMS.PIGSNey.Controllers
             af.AppDate = DateTime.Now;
             db.ApplyFortb.Add(af);
             return await db.SaveChangesAsync();
+        }
 
+        public async Task<ActionResult<int>> AddAT([FromBody] AddTool at)
+        {
+            AddTool at1 = new AddTool();
+            at1.TId = at.TId;
+            at1.UId = at.UId;
+            at1.AStatic = 0;
+            at1.AppDate = DateTime.Now;
+            db.AddTool.Add(at1);
+            return await db.SaveChangesAsync();
         }
 
         #endregion
-
 
         #region 查询材料信息并进货
 
@@ -191,7 +209,55 @@ namespace OMS.PIGSNey.Controllers
 
         }
 
+        /// <summary>
+        /// 根据MAId进行反填，修改材料表数据（材料采购）
+        /// </summary>
+        /// <param name="MaId"></param>
+        /// <param name="MAmount"></param>
+        /// <returns></returns>
+       [Route("AddMamount")]
+        public async Task<ActionResult<int>> AddMamount(int MAId,int MAmount)
+        {
+            var list = db.Materialstb.Where(m => m.MAId == MAId).FirstOrDefault();
+            list.MAmount += MAmount;
+            db.Materialstb.Update(list);
+            return await db.SaveChangesAsync();
+        }
 
+        #endregion
+
+        #region 材料使用明细
+        /// <summary>
+        /// 材料使用明细
+        /// </summary>
+        /// <param name="MAId"></param>
+        /// <returns></returns>
+        [Route("GetUseMaterial")]
+        public async Task<ActionResult<IEnumerable<Materials>>> GetUseMaterial(int MAId)
+        {
+            var list = from m in db.Materialstb
+                        join af in db.ApplyFortb on m.MAId equals af.MAId
+                        join a in db.Audit on af.AId equals a.AId
+                        join u in db.UserInfotb on af.UId equals u.UId
+                        join md in db.MaintenanceDetailstb on u.UId equals md.UId
+                        join ud in db.UserRepairsDetailstb on md.URDId equals ud.UrdId orderby a.AuditDate descending
+                        select new Materials
+                        {
+                            MAId=m.MAId,
+                            UName = u.UName,
+                            Marque = ud.Marque,
+                            Type = ud.Type,
+                            State = ud.State,
+                            UPhone = u.UPhone,
+                            AuditDate = a.AuditDate,
+                            MaterialName = m.MaterialName
+                        };
+            if (MAId!=0)
+            {
+                list = list.Where(m => m.MAId == MAId);
+            }
+            return await list.ToListAsync();
+        }
         #endregion
     }
 }
