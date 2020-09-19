@@ -21,7 +21,7 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> KeHu(int uid)
+        public FenYe<KeHuXianshi> KeHu(int uid = 0,string name="", int dangqianye=1 , int meiyetiaoshu=3 )
         {
             var list = from u in db.UserInfotb
                        join r in db.UserRepairsDetailstb
@@ -33,10 +33,51 @@ namespace OMS.PIGSNey.Controllers
                            UAccount = u.UAccount,
                            UPhone = u.UPhone,
                            Type = r.Type,
-                           Reason = r.Reason
+                           Reason = r.Reason,
+                           UrdId=r.UrdId
                        };
-            list = list.Where(p => p.UId==uid);
-            return await list.ToListAsync();
+            list = list.Where(p => p.UId == uid);
+            if (!string.IsNullOrEmpty(name))
+            {
+                list = list.Where(p => p.Type.Contains(name));
+            }
+            if (dangqianye < 1)
+            {
+                dangqianye = 1;
+            }
+            var zongtiaoshu = list.Count();
+            int page;
+            if (zongtiaoshu % meiyetiaoshu == 0)
+            {
+                page = zongtiaoshu / meiyetiaoshu;
+            }
+            else
+            {
+                page = zongtiaoshu / meiyetiaoshu + 1;
+            }
+            if (dangqianye > page)
+            {
+                dangqianye = page;
+            }
+
+            if (zongtiaoshu == 0)
+            {
+                FenYe<KeHuXianshi> p = new FenYe<KeHuXianshi>();
+
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
+            else
+            {
+                FenYe<KeHuXianshi> p = new FenYe<KeHuXianshi>();
+                p.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
 
         }
         /// <summary>
@@ -44,33 +85,7 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> WeiXui(int uid)
-        {
-            var list = from u in db.UserInfotb
-                       join r in db.UserRepairsDetailstb
-                       on u.UId equals r.UId
-                       join m in db.MaintenanceDetailstb
-                       on r.UrdId equals m.URDId
-                       select new KeHuXianshi()
-                       {
-                           UId=m.UId,
-                           UName = u.UName,
-                           UAccount = u.UAccount,
-                           UPhone = u.UPhone,
-                           Type = r.Type,
-                           Reason = r.Reason,
-                           State=r.State
-                       };
-            list = list.Where(p => p.UId==uid &&p.State==2||p.State==3||p.State==4 );
-            return await list.ToListAsync();
-
-        }
-        /// <summary>
-        /// 管理员查看
-        /// </summary>
-        /// <param name="uid"></param>
-        /// <returns></returns>
-        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> GuanLi()
+        public FenYe<KeHuXianshi> WeiXui(int uid, int dangqianye = 1, int meiyetiaoshu = 3)
         {
             var list = from u in db.UserInfotb
                        join r in db.UserRepairsDetailstb
@@ -84,28 +99,104 @@ namespace OMS.PIGSNey.Controllers
                            UAccount = u.UAccount,
                            UPhone = u.UPhone,
                            Type = r.Type,
-                           Reason = r.Reason
+                           Reason = r.Reason,
+                           State = r.State
                        };
-            return await list.ToListAsync();
+            list = list.Where(p => p.UId == uid && p.State == 2 || p.State == 3 || p.State == 4);
+            if (dangqianye <= 1)
+            {
+                dangqianye = 1;
+            }
+            var zongtiaoshu = list.Count();
+            int page;
+            if (zongtiaoshu % meiyetiaoshu == 0)
+            {
+                page = zongtiaoshu / meiyetiaoshu;
+            }
+            else
+            {
+                page = zongtiaoshu / meiyetiaoshu + 1;
+            }
+            if (dangqianye >= page)
+            {
+                dangqianye = page;
+            }
+
+            FenYe<KeHuXianshi> k = new FenYe<KeHuXianshi>();
+            k.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
+            k.Dangqianye = dangqianye;
+            k.Zongtiaoshu = zongtiaoshu;
+            k.Zongyeshu = page;
+            return k;
 
         }
-        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> ChaoJi(int uid)
+        /// <summary>
+        /// 管理员查看
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public FenYe<KeHuXianshi> GuanLi(int dangqianye = 1, int meiyetiaoshu = 3)
         {
             var list = from u in db.UserInfotb
                        join r in db.UserRepairsDetailstb
                        on u.UId equals r.UId
+                       join m in db.MaintenanceDetailstb
+                       on r.UrdId equals m.URDId
                        select new KeHuXianshi()
                        {
-                           UId = u.UId,
+                           UId = m.UId,
                            UName = u.UName,
                            UAccount = u.UAccount,
                            UPhone = u.UPhone,
                            Type = r.Type,
-                           Reason = r.Reason
+                           Reason = r.Reason,
+                           UrdId=r.UrdId
                        };
-            list = list.Where(p => p.UId == uid);
-            return await list.ToListAsync();
+            if (dangqianye < 1)
+            {
+                dangqianye = 1;
+            }
+            var zongtiaoshu = list.Count();
+            int page;
+            if (zongtiaoshu % meiyetiaoshu == 0)
+            {
+                page = zongtiaoshu / meiyetiaoshu;
+            }
+            else
+            {
+                page = zongtiaoshu / meiyetiaoshu + 1;
+            }
+            if (dangqianye > page)
+            {
+                dangqianye = page;
+            }
 
+            FenYe<KeHuXianshi> k = new FenYe<KeHuXianshi>();
+            k.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
+            k.Dangqianye = dangqianye;
+            k.Zongtiaoshu = zongtiaoshu;
+            k.Zongyeshu = page;
+            return k;
+
+        }
+        /// <summary>
+        /// 超级管理员
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ActionResult<IEnumerable<UserInfotb>>> ChaoJi(string acount)
+        {
+            return await db.UserInfotb.ToListAsync();
+        }
+        /// <summary>
+        /// 冻结账户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>> ZhuangTai1(int id)
+        {
+            UserInfotb b = db.UserInfotb.Find(id);
+            b.UState = 0;
+            return await db.SaveChangesAsync();
         }
         /// <summary>
         /// 修改客户密码
@@ -113,7 +204,7 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="id"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>>KeHuPwd(int id,string pwd)
+        public async Task<ActionResult<int>> KeHuPwd(int id, string pwd)
         {
             UserInfotb b = db.UserInfotb.Find(id);
             b.UPwd = pwd;
@@ -124,10 +215,12 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> ZhuangTai1(int id)
+        public async Task<ActionResult<int>> ZhuangTai2(int id, int id2)
         {
             UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
             b.State = 2;
+            UserInfotb c = db.UserInfotb.Find(id2);
+            c.UState = 2;
             return await db.SaveChangesAsync();
         }
         /// <summary>
@@ -135,7 +228,7 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> ZhuangTai2(int id)
+        public async Task<ActionResult<int>> ZhuangTai3(int id)
         {
             UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
             b.State = 3;
@@ -146,10 +239,20 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> ZhuangTai3(int id)
+        public async Task<ActionResult<int>> ZhuangTai4(int id)
         {
             UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
             b.State = 4;
+            return await db.SaveChangesAsync();
+        }
+        /// <summary>
+        /// 客户删除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>>KDel(int id)
+        {
+            db.UserRepairsDetailstb.Remove(db.UserRepairsDetailstb.Find(id));
             return await db.SaveChangesAsync();
         }
     }
