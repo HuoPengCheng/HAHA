@@ -18,7 +18,7 @@ namespace OMS.PIGSNey.Models
         //规格
         public string MSpecification { get; set; }
         //材料类别
-        public string MCategory { get; set; }
+        public int CategoryId { get; set; }
         //数量
         public int MAmount { get; set; }
         //图片
