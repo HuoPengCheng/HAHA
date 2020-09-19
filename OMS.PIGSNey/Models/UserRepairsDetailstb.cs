@@ -15,15 +15,16 @@ namespace OMS.PIGSNey.Models
         public string Ordernumber { get; set; }
         //商品类型
         public string Type { get; set; }
-        //维修等级
+        //等级
         public int Degree { get; set; }
-
         //商品型号
         public string Marque { get; set; }
+        //报修原因
+        public string Cause { get; set; }
         //报修理由
         public string Reason { get; set; }
         //地址(省市区)
-        public string Addrelss { get; set; }
+        public string Address { get; set; }
         //详细地址
         public string DetailedAddress { get; set; }
         //获取当前时间

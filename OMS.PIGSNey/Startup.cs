@@ -54,7 +54,7 @@ namespace OMS.PIGSNey
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseCors("cors");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
