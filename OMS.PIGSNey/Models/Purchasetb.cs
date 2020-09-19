@@ -6,8 +6,10 @@ using System.Text;
 
 namespace OMS.PIGSNey.Models
 {
-    //采购表
-   public class Purchasetb
+    /// <summary>
+    /// 采购表
+    /// </summary>
+    public class Purchasetb
     {
         [Key]
         public int PId { get; set; }
