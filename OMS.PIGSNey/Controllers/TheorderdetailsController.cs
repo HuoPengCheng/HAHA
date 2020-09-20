@@ -22,22 +22,57 @@ namespace OMS.PIGSNey.Controllers
 
         [HttpGet]
         [Route("api/UserGetURD")]
-        public FenYe<UserRepairsDetailstb> UserGetURD(int UId, string Name = "", string StrTime = "", string EndTime = "", int PageSize = 5, int CurrPage = 1)
+        public FenYe<UserRepairsDetailstb> UserGetURD(int UId, string name = "", string strTime = "", string endTime = "", int PageSize = 5, int CurrPage = 1)
         {
+            DateTime st= DateTime.Now;
+            DateTime et=DateTime.Now; 
             var linq = db.UserRepairsDetailstb.Where(x => x.UId == UId).ToList();
-            if (!string.IsNullOrEmpty(Name))
+            if (!string.IsNullOrEmpty(name))
             {
-                linq.Where(x => x.Type == Name);
+                if (!string.IsNullOrEmpty(strTime))
+                {
+                    if (!string.IsNullOrEmpty(endTime))
+                    {
+                        et = DateTime.Parse(endTime);
+                        linq = db.UserRepairsDetailstb.Where(x => x.UId == UId && x.Ordernumber.Contains(name) && x.Date >= st && x.Date <= et).ToList();
+                    }
+                    else
+                    {
+                        st = DateTime.Parse(strTime);
+                        linq = db.UserRepairsDetailstb.Where(x => x.UId == UId && x.Ordernumber.Contains(name) && x.Date >= st).ToList();
+                    }
+                }
+                else if (!string.IsNullOrEmpty(endTime))
+                {
+                    et = DateTime.Parse(endTime);
+                    linq = db.UserRepairsDetailstb.Where(x => x.UId == UId && x.Ordernumber.Contains(name) && x.Date <= et).ToList();
+                }
+                else
+                {
+                    linq = db.UserRepairsDetailstb.Where(x => x.UId == UId && x.Ordernumber.Contains(name)).ToList();
+                }
             }
-            if (!string.IsNullOrEmpty(StrTime))
+            else if (!string.IsNullOrEmpty(strTime))
             {
-                DateTime st = DateTime.Parse(StrTime);
-                linq.Where(x => x.Date > st);
+                if (!string.IsNullOrEmpty(endTime))
+                {
+                    et = DateTime.Parse(endTime);
+                    linq = db.UserRepairsDetailstb.Where(x => x.UId == UId  && x.Date <= et).ToList();
+                }
+                else
+                {
+                    st = DateTime.Parse(strTime);
+                    linq = db.UserRepairsDetailstb.Where(x => x.UId == UId  && x.Date >= st).ToList();
+                }
             }
-            if (!string.IsNullOrEmpty(EndTime))
+            else if (!string.IsNullOrEmpty(endTime))
             {
-                DateTime et = DateTime.Parse(EndTime);
-                linq.Where(x => x.Date < et);
+                et = DateTime.Parse(endTime);
+                linq = db.UserRepairsDetailstb.Where(x => x.UId == UId && x.Date<=et).ToList();
+            }
+            else
+            {
+                linq = db.UserRepairsDetailstb.Where(x => x.UId == UId).ToList();
             }
             if (CurrPage < 1)
             {
