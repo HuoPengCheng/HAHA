@@ -34,7 +34,10 @@ namespace OMS.PIGSNey.Controllers
                            UPhone = u.UPhone,
                            Type = r.Type,
                            Reason = r.Reason,
-                           UrdId=r.UrdId
+                           UrdId=r.UrdId,
+                           UState=u.UState,
+                           State=r.State,
+                           Marque=r.Marque
                        };
             list = list.Where(p => p.UId == uid);
             if (!string.IsNullOrEmpty(name))
