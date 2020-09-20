@@ -217,9 +217,9 @@ namespace OMS.PIGSNey.Controllers
         /// <returns></returns>
         public async Task<ActionResult<int>> ZhuangTai2(int id, int id2)
         {
-            UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
+            UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id2);
             b.State = 2;
-            UserInfotb c = db.UserInfotb.Find(id2);
+            UserInfotb c = db.UserInfotb.Find(id);
             c.UState = 2;
             return await db.SaveChangesAsync();
         }
