@@ -13,10 +13,10 @@ namespace OMS.PIGSNey.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //问卷查看---作者/李达凯
-    public class QuestiontbController : ControllerBase
+    public class dataReport : ControllerBase
     {
         public OMSContext db;
-        public QuestiontbController(OMSContext db) { this.db = db; }
+        public dataReport(OMSContext db) { this.db = db; }
         //查看问卷
        [HttpGet]
         [Route("question")]
