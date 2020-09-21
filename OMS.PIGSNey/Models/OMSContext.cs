@@ -25,9 +25,12 @@ namespace OMS.PIGSNey.Models
         public DbSet<UserInfotb> UserInfotb { get; set; }
         public DbSet<UserRepairsDetailstb> UserRepairsDetailstb { get; set; }
         public DbSet<UserSubsidiarytb> UserSubsidiarytb { get; set; }
-        public DbSet<timu> Timus { get; set; }
-        public DbSet<xuanxiang> Xuanxiangs { get; set; }
-        public DbSet<wenjuan> Wenjuans { get; set; }
+        public DbSet<Prompttb> prompttb { get; set; }
 
+        public DbSet<AddTool> AddTool { get; set; }
+
+        public DbSet<Audit> Audit { get; set; }
+
+        public DbSet<Category> Category { get; set; }
     }
 }
