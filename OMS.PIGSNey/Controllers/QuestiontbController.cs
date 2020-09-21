@@ -20,10 +20,10 @@ namespace OMS.PIGSNey.Controllers
         //查看问卷
        [HttpGet]
         [Route("question")]
-        public async Task<ActionResult<IEnumerable<Questiontb>>> question()
+        public async Task<ActionResult<IEnumerable<wenjuan>>>  wenjuan()
         {
             {
-                var list = db.Questiontb;              
+                var list = db.wenjuan;              
                 return await list.ToListAsync();
             }
 
