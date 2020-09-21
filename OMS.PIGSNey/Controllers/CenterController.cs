@@ -22,7 +22,7 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         public FenYe<KeHuXianshi> KeHu(int uid = 0,string name="", int dangqianye=1 , int meiyetiaoshu=3 )
-        {
+        {         
             var list = from u in db.UserInfotb
                        join r in db.UserRepairsDetailstb
                        on u.UId equals r.UId
@@ -34,7 +34,10 @@ namespace OMS.PIGSNey.Controllers
                            UPhone = u.UPhone,
                            Type = r.Type,
                            Reason = r.Reason,
-                           UrdId=r.UrdId
+                           UrdId=r.UrdId,
+                           UState=u.UState,
+                           State=r.State,
+                           Marque=r.Marque
                        };
             list = list.Where(p => p.UId == uid);
             if (!string.IsNullOrEmpty(name))
@@ -102,7 +105,7 @@ namespace OMS.PIGSNey.Controllers
                            Reason = r.Reason,
                            State = r.State
                        };
-            list = list.Where(p => p.UId == uid && p.State == 2 || p.State == 3 || p.State == 4);
+            list = list.Where(p => p.UId == uid && p.State !=0);
             if (dangqianye <= 1)
             {
                 dangqianye = 1;
@@ -192,7 +195,7 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> ZhuangTai1(int id)
+        public async Task<ActionResult<int>> ZhuangTai1(int id )
         {
             UserInfotb b = db.UserInfotb.Find(id);
             b.UState = 0;
@@ -217,9 +220,9 @@ namespace OMS.PIGSNey.Controllers
         /// <returns></returns>
         public async Task<ActionResult<int>> ZhuangTai2(int id, int id2)
         {
-            UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
+            UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id2);
             b.State = 2;
-            UserInfotb c = db.UserInfotb.Find(id2);
+            UserInfotb c = db.UserInfotb.Find(id);
             c.UState = 2;
             return await db.SaveChangesAsync();
         }
