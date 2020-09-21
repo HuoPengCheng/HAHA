@@ -22,7 +22,7 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         public FenYe<KeHuXianshi> KeHu(int uid = 0,string name="", int dangqianye=1 , int meiyetiaoshu=3 )
-        {
+        {         
             var list = from u in db.UserInfotb
                        join r in db.UserRepairsDetailstb
                        on u.UId equals r.UId
@@ -105,7 +105,7 @@ namespace OMS.PIGSNey.Controllers
                            Reason = r.Reason,
                            State = r.State
                        };
-            list = list.Where(p => p.UId == uid && p.State == 2 || p.State == 3 || p.State == 4);
+            list = list.Where(p => p.UId == uid && p.State !=0);
             if (dangqianye <= 1)
             {
                 dangqianye = 1;
