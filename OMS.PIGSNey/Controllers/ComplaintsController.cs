@@ -26,12 +26,12 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="shijian"></param>
         /// <returns></returns>
         [Route("Addwenjuan")]
-        public async Task<ActionResult<int>> Addwenjuan(string mingcheng, string shijian)
+        public async Task<ActionResult<int>> Addwenjuan(string mingcheng)
         {
             wenjuan wenjuan = new wenjuan()
             {
                 mingcheng = mingcheng,
-                shijian = shijian
+                shijian = DateTime.Now.ToString()
             };
             db.Wenjuans.Add(wenjuan);
             return await db.SaveChangesAsync();
