@@ -32,5 +32,6 @@ namespace OMS.PIGSNey.Models
         public DbSet<Audit> Audit { get; set; }
 
         public DbSet<Category> Category { get; set; }
+        public DbSet<wenjuan> wenjuan { get; set; }
     }
 }
