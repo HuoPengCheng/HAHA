@@ -33,7 +33,7 @@ namespace OMS.PIGSNey.Controllers
                 mingcheng = mingcheng,
                 shijian = shijian
             };
-            db.wenjuan.Add(wenjuan);
+            db.Wenjuans.Add(wenjuan);
             return await db.SaveChangesAsync();
         } 
         /// <summary>
@@ -43,7 +43,7 @@ namespace OMS.PIGSNey.Controllers
         [Route("Getwenjuan")]
         public async Task<ActionResult<IEnumerable<wenjuan>>> Getwenjuan()
         {
-            return await db.wenjuan.ToListAsync();
+            return await db.Wenjuans.ToListAsync();
         }
         /// <summary>
         /// 删除问卷信息
@@ -53,7 +53,7 @@ namespace OMS.PIGSNey.Controllers
         [Route("Removewenjuan")]
         public async Task<ActionResult<int>> Removewenjuan(int id)
         {
-            db.wenjuan.Remove(db.wenjuan.Find(id));
+            db.Wenjuans.Remove(db.Wenjuans.Find(id));
             return await db.SaveChangesAsync();
         }
         /// <summary>
