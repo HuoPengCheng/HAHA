@@ -35,5 +35,10 @@ namespace OMS.PIGSNey.Models
         public DbSet<timu> Timus { get; set; }
         public DbSet<wenjuan> Wenjuans { get; set; }
         public DbSet<xuanxiang> Xuanxiangs { get; set; }
+
+
+        public DbSet<AuditTool> AuditTool { get; set; }
+
+
     }
 }
