@@ -37,7 +37,6 @@ namespace OMS.PIGSNey.Models
         public DbSet<xuanxiang> Xuanxiangs { get; set; }
 
 
-
         public DbSet<AuditTool> AuditTool { get; set; }
 
 
