@@ -24,7 +24,7 @@ namespace OMS.PIGSNey.Controllers
         public async Task<ActionResult<IEnumerable<wenjuan>>>  wenjuan()
         {
             {
-                var list = db.wenjuan;              
+                var list = db.Wenjuans;              
                 return await list.ToListAsync();
             }
 
