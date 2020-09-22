@@ -22,6 +22,17 @@ namespace OMS.PIGSNey.Controllers
             this.db = db;
         }
 
+        #region 类别（下拉框）
+
+        [Route("GetCategory")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
+        {
+            var list = from c in db.Category select c;
+            return await db.Category.ToListAsync();
+        }
+
+        #endregion
+
         #region  材料审核显示
         /// <summary>
         /// 材料审核
@@ -250,7 +261,7 @@ namespace OMS.PIGSNey.Controllers
             {
                 pageIndex = 1;
             }
-            var list = (from m in db.Materialstb
+            var list = ((from m in db.Materialstb
                         join c in db.Category on m.CategoryId equals c.CId
                         select new Ma
                         {
@@ -261,14 +272,14 @@ namespace OMS.PIGSNey.Controllers
                             CName = c.CName,
                             MAmount = m.MAmount,
                             MImg = m.MImg
-                        });
+                        })).ToList();
             if (!string.IsNullOrEmpty(MaterialName))
             {
-                list = list.Where(a => a.MaterialName.Contains(MaterialName));
+                list = list.Where(a => a.MaterialName.Contains(MaterialName)).ToList();
             }
             if (CId!=0)
             {
-                list = list.Where(c=>c.CId==CId);
+                list = list.Where(c=>c.CId==CId).ToList();
             }
 
             int count = list.Count();
@@ -281,7 +292,7 @@ namespace OMS.PIGSNey.Controllers
             fenYeMa.Zongtiaoshu = count;
             fenYeMa.Zongyeshu = totalpage;
             fenYeMa.Dangqianye = pageIndex;
-            fenYeMa.masd = list.Skip(pageIndex * pageSize).Take(pageSize).ToList();
+            fenYeMa.masd = list.Skip((pageIndex-1) * pageSize).Take(pageSize).ToList();
 
             return fenYeMa;
 
