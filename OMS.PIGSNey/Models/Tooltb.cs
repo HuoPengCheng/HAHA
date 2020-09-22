@@ -18,8 +18,7 @@ namespace OMS.PIGSNey.Models
         public string ToolName { get; set; }
         //工具规格
         public string TSpecification { get; set; }
-        //工具类别
-        public string TCategory { get; set; }
+        
         //图片
         public string Img { get; set; }
     }

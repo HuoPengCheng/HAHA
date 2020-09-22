@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace OMS.PIGSNey.Models
 {
-    public class Materials
+    
+    public class MXQ
     {
         
         public int MAId { get; set; }

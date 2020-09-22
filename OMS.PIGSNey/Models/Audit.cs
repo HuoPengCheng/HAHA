@@ -17,7 +17,7 @@ namespace OMS.PIGSNey.Models
         [Key]
         public int AUId { get; set; }
         /// <summary>
-        /// 申请表Id
+        /// 材料申请表Id
         /// </summary>
         public int AId { get; set; }
         /// <summary>
