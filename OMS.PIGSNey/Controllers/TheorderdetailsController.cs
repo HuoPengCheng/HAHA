@@ -24,20 +24,21 @@ namespace OMS.PIGSNey.Controllers
         [Route("api/UserGetURD")]
         public FenYe<UserRepairsDetailstb> UserGetURD(int UId, string Name = "", string StrTime = "", string EndTime = "", int PageSize = 5, int CurrPage = 1)
         {
-            var linq = db.UserRepairsDetailstb.Where(x => x.UId == UId).ToList();
+            var linq = from u in db.UserRepairsDetailstb select u;
+            linq = linq.Where(p => p.UId == 12);
             if (!string.IsNullOrEmpty(Name))
             {
-                linq.Where(x => x.Type == Name);
+                linq= linq.Where(x => x.Ordernumber.Contains(Name));
             }
             if (!string.IsNullOrEmpty(StrTime))
             {
                 DateTime st = DateTime.Parse(StrTime);
-                linq.Where(x => x.Date > st);
+                linq = linq.Where(x => x.Date > st);
             }
             if (!string.IsNullOrEmpty(EndTime))
             {
                 DateTime et = DateTime.Parse(EndTime);
-                linq.Where(x => x.Date < et);
+                linq = linq.Where(x => x.Date < et);
             }
             if (CurrPage < 1)
             {
@@ -154,5 +155,25 @@ namespace OMS.PIGSNey.Controllers
 
 
 
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+
+/// <summary>
+/// 袁少峰  订单详情表
+/// </summary>
+namespace OMS.PIGSNey.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TheorderdetailsController : ControllerBase
+    {
+        
     }
 }
