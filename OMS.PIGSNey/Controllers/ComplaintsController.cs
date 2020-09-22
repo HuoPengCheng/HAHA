@@ -35,7 +35,7 @@ namespace OMS.PIGSNey.Controllers
             };
             db.Wenjuans.Add(wenjuan);
             return await db.SaveChangesAsync();
-        }
+        } 
         /// <summary>
         /// 显示问卷信息
         /// </summary>
@@ -50,6 +50,7 @@ namespace OMS.PIGSNey.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Route("Removewenjuan")]
         public async Task<ActionResult<int>> Removewenjuan(int id)
         {
             db.Wenjuans.Remove(db.Wenjuans.Find(id));
