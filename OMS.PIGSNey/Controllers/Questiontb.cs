@@ -10,13 +10,14 @@ using Microsoft.AspNetCore.Cors;
 
 namespace OMS.PIGSNey.Controllers
 {
+    //数据报表——API
     [Route("api/[controller]")]
     [ApiController]
     //问卷查看---作者/李达凯
-    public class QuestiontbController : ControllerBase
+    public class Questiontb : ControllerBase
     {
         public OMSContext db;
-        public QuestiontbController(OMSContext db) { this.db = db; }
+        public Questiontb(OMSContext db) { this.db = db; }
         //查看问卷
        [HttpGet]
         [Route("question")]
@@ -32,22 +33,19 @@ namespace OMS.PIGSNey.Controllers
         [HttpGet]
         //维修工单
         [Route("WeiXui")]
-        public async Task<ActionResult<IEnumerable<KeHuXianshi>>> WeiXui(int mid)
+        public async Task<ActionResult<IEnumerable<string>>> WeiXui()
         {
-            var list = from u in db.MaintenanceDetailstb
-                       join r in db.Materialstb
-                       on u.URDId equals r.MAId
-                       join m in db.MaintenanceDetailstb
-                       on r.MAId equals m.URDId
-                       select new KeHuXianshi
-                       {
-                          
-                       };
-            list = list.Where(p => p.MId == mid && p.State == 2 || p.State == 3 || p.State == 4);
-            return await list.ToListAsync();
+            int a = db.UserRepairsDetailstb.Where(x => x.State == 1).Count();
+            int b = db.UserRepairsDetailstb.Where(x => x.State == 2).Count();
+            int c = db.UserRepairsDetailstb.Where(x => x.State == 3).Count();
+            int d = db.UserRepairsDetailstb.Where(x => x.State == 4).Count();
+
+          
+            string respon = "";
 
         }
   
+       
 
     }
 }
