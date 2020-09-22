@@ -103,7 +103,8 @@ namespace OMS.PIGSNey.Controllers
                            UPhone = u.UPhone,
                            Type = r.Type,
                            Reason = r.Reason,
-                           State = r.State
+                           State = r.State,
+                           UrdId=r.UrdId
                        };
             list = list.Where(p => p.UId == uid && p.State !=0);
             if (dangqianye <= 1)
@@ -125,12 +126,24 @@ namespace OMS.PIGSNey.Controllers
                 dangqianye = page;
             }
 
-            FenYe<KeHuXianshi> k = new FenYe<KeHuXianshi>();
-            k.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
-            k.Dangqianye = dangqianye;
-            k.Zongtiaoshu = zongtiaoshu;
-            k.Zongyeshu = page;
-            return k;
+            if (zongtiaoshu == 0)
+            {
+                FenYe<KeHuXianshi> p = new FenYe<KeHuXianshi>();
+
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
+            else
+            {
+                FenYe<KeHuXianshi> p = new FenYe<KeHuXianshi>();
+                p.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
 
         }
         /// <summary>
@@ -207,11 +220,22 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="id"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> KeHuPwd(int id, string pwd)
+        public async Task<ActionResult<int>> KeHuPwd(int id, string jpwd,string xpwd)
         {
-            UserInfotb b = db.UserInfotb.Find(id);
-            b.UPwd = pwd;
-            return await db.SaveChangesAsync();
+            var list = from y in db.UserInfotb where y.UPwd==jpwd select y;
+            int i = list.Count();
+            if (i>0)
+            {
+                UserInfotb b = db.UserInfotb.Find(id);
+                b.UPwd = xpwd;
+                return await db.SaveChangesAsync();
+            }
+            else
+            {
+                return 0;
+            }
+            
+            
         }
         /// <summary>
         /// 维修员接单
