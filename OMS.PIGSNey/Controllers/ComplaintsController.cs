@@ -56,10 +56,26 @@ namespace OMS.PIGSNey.Controllers
             db.Wenjuans.Remove(db.Wenjuans.Find(id));
             return await db.SaveChangesAsync();
         }
-        //[Obsolete]
-        //public int toupiaoAdd()
-        //{
-
-        //}
+        /// <summary>
+        /// 添加意见投诉
+        /// </summary>
+        /// <param name="comment"></param>
+        /// <param name="Img"></param>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("AddComplaints")]
+        [Obsolete]
+        public async Task<ActionResult<int>> AddComplaints(string comment, string Img, int state)
+        {
+            Complaintb complaintb = new Complaintb()
+            {
+                Comment = comment,
+                Img = Img,
+                State = 0
+            };
+            db.Complaintb.Add(complaintb);
+            return await db.SaveChangesAsync();
+        }
     }
 }
