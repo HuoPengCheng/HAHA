@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,6 +8,8 @@ namespace OMS.PIGSNey.Models
 {
     public class Jurisdiction
     {
+        [Key]
+        public int UId { get; set; }
         public int JId { get; set; }
         //角色id
         public int RId { get; set; }
@@ -22,8 +25,7 @@ namespace OMS.PIGSNey.Models
 
         //角色名称
         public string RName { get; set; }
-
-        public int UId { get; set; }
+       
         //姓名
         public string UName { get; set; }
         //用户账号
