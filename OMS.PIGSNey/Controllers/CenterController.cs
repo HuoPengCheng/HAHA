@@ -320,5 +320,25 @@ namespace OMS.PIGSNey.Controllers
             db.UserRepairsDetailstb.Remove(db.UserRepairsDetailstb.Find(id));
             return await db.SaveChangesAsync();
         }
+        /// <summary>
+        /// 反填
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<IEnumerable<UserInfotb>>>Fan(int id)
+        {
+            var list = from u in db.UserInfotb select u;
+            list = list.Where(p => p.UId == id);
+            return await list.ToListAsync();
+        }
+
+        public async Task<ActionResult<int>>ZL(int id,string name,string phone)
+        {
+            UserInfotb b = db.UserInfotb.Find(id);
+            b.UName = name;
+            b.UPhone = phone;
+            return await db.SaveChangesAsync();
+        }
+
     }
 }
