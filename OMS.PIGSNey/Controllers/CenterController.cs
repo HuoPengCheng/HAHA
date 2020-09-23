@@ -331,7 +331,13 @@ namespace OMS.PIGSNey.Controllers
             list = list.Where(p => p.UId == id);
             return await list.ToListAsync();
         }
-
+        /// <summary>
+        /// 修改资料
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="phone"></param>
+        /// <returns></returns>
         public async Task<ActionResult<int>>ZL(int id,string name,string phone)
         {
             UserInfotb b = db.UserInfotb.Find(id);
