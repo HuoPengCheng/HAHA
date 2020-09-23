@@ -42,7 +42,7 @@ namespace OMS.PIGSNey.Controllers
             list = list.Where(p => p.UId == uid);
             if (!string.IsNullOrEmpty(name))
             {
-                list = list.Where(p => p.Type.Contains(name));
+                list = list.Where(p => p.Marque.Contains(name));
             }
             if (dangqianye < 1)
             {
@@ -199,9 +199,47 @@ namespace OMS.PIGSNey.Controllers
         /// 超级管理员
         /// </summary>
         /// <returns></returns>
-        public async Task<ActionResult<IEnumerable<UserInfotb>>> ChaoJi(string acount)
+        public FenYe<UserInfotb> ChaoJi(int dangqianye = 1, int meiyetiaoshu = 5)
         {
-            return await db.UserInfotb.ToListAsync();
+            var list = from u in db.UserInfotb select u;
+            if (dangqianye <= 1)
+            {
+                dangqianye = 1;
+            }
+            var zongtiaoshu = list.Count();
+            int page;
+            if (zongtiaoshu % meiyetiaoshu == 0)
+            {
+                page = zongtiaoshu / meiyetiaoshu;
+            }
+            else
+            {
+                page = zongtiaoshu / meiyetiaoshu + 1;
+            }
+            if (dangqianye >= page)
+            {
+                dangqianye = page;
+            }
+
+            if (zongtiaoshu == 0)
+            {
+                FenYe<UserInfotb> p = new FenYe<UserInfotb>();
+
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
+            else
+            {
+                FenYe<UserInfotb> p = new FenYe<UserInfotb>();
+                p.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
+
         }
         /// <summary>
         /// 冻结账户
@@ -282,5 +320,31 @@ namespace OMS.PIGSNey.Controllers
             db.UserRepairsDetailstb.Remove(db.UserRepairsDetailstb.Find(id));
             return await db.SaveChangesAsync();
         }
+        /// <summary>
+        /// 反填
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<IEnumerable<UserInfotb>>>Fan(int id)
+        {
+            var list = from u in db.UserInfotb select u;
+            list = list.Where(p => p.UId == id);
+            return await list.ToListAsync();
+        }
+        /// <summary>
+        /// 修改资料
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>>ZL(int id,string name,string phone)
+        {
+            UserInfotb b = db.UserInfotb.Find(id);
+            b.UName = name;
+            b.UPhone = phone;
+            return await db.SaveChangesAsync();
+        }
+
     }
 }
