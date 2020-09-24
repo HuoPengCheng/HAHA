@@ -24,11 +24,11 @@ namespace OMS.PIGSNey.Controllers
         
         [HttpGet]
         [Route("api/Denglu")]
-        public async Task<ActionResult<int>> Denglu(string name,string pass)
+        public int Denglu(string name,string pass)
         {
-            db.UserInfotb.FirstOrDefault(x => x.UName == name).ToString();
-            db.UserInfotb.FirstOrDefault(x => x.UPwd == pass).ToString();
-            return await db.SaveChangesAsync();
+            
+            int i =  db.UserInfotb.Where(x => x.UName == name && x.UPwd == pass || x.UPhone == name && x.UPwd == pass || x.UAccount == name && x.UPwd == pass).Count();
+            return i;
         }
         [Route("api/UserShow")]
         [HttpGet]
@@ -50,13 +50,14 @@ namespace OMS.PIGSNey.Controllers
         }
         [Route("api/PageUserShow")]
         [HttpGet]
-        public FenYe<Jurisdiction> PageUserShow(int PageSize = 3, int CurrPage = 1)
+        public FenYe<Jurisdiction> GLYGetURD(string Name = "",string sjh="",string zh="", int PageSize = 5, int CurrPage = 1)
         {
-              var linq=from ro in db.Roletb join
+           var linq=from ro in db.Roletb join
                   u in db.UserInfotb on
                   ro.RId equals u.RId
                   select new Jurisdiction
                   {
+                      UId=u.UId,
                       RName=ro.RName,
                       UName=u.UName,
                       UAccount=u.UAccount,
@@ -64,30 +65,79 @@ namespace OMS.PIGSNey.Controllers
                       UPhone=u.UPhone,
                       UState=u.UState,
                   };
+
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                linq = linq.Where(x => x.UName.Contains(Name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(sjh))
+            {
+                linq = linq.Where(x => x.UAccount.Contains(sjh));
+            }
+
+            if (!string.IsNullOrWhiteSpace(zh))
+            {
+                linq = linq.Where(x => x.UPhone.Contains(zh));
+            }
             if (CurrPage < 1)
             {
                 CurrPage = 1;
             }
-            int totalcount = linq.ToList().Count();
-            int totalpage;
-            if (totalcount % PageSize == 0)
+            int TotalCount = linq.Count();
+            int TotalPage = 0;
+            if (TotalCount % PageSize == 0)
             {
-                totalpage = totalcount / PageSize;
+                TotalPage = TotalCount / PageSize;
             }
             else
             {
-                totalpage = totalcount / PageSize + 1;
+                TotalPage = TotalCount / PageSize + 1;
             }
-            if (CurrPage > totalpage)
-            {
-                CurrPage = totalpage;
-            }
-            FenYe<Jurisdiction> p1 = new FenYe<Jurisdiction>();
-            p1.masd = linq.Skip(PageSize * (CurrPage - 1)).Take(PageSize).ToList();
-            p1.Zongyeshu = CurrPage;
-            p1.Zongtiaoshu = totalcount;
-            p1.Dangqianye = totalpage;
-            return p1;
+            FenYe<Jurisdiction> p = new FenYe<Jurisdiction>();
+            p.masd = linq.Skip(PageSize * (CurrPage - 1)).Take(PageSize).ToList();
+            p.Zongtiaoshu = TotalCount;
+            p.Zongyeshu = TotalPage;
+            p.Dangqianye = CurrPage;
+            return p;
         }
+
+        [HttpDelete]
+        [Route("api/gai")]
+        public int Gai(int id)
+        {
+            UserInfotb u = db.UserInfotb.FirstOrDefault(x => x.UId == id);
+            if (u.UState==1)
+            {
+                u.UState = 2;
+            }
+            else
+            {
+                u.UState = 1;
+            }
+            return  db.SaveChanges();
+        }
+
+        [HttpGet]
+        [Route("api/Session")]
+        public async Task<ActionResult<IEnumerable<Jurisdiction>>> Session(string name,string pass)
+        {
+            var p=from ro in db.Roletb join
+                  u in db.UserInfotb on
+                  ro.RId equals u.RId
+                  select new Jurisdiction
+                  {
+                      UId=u.UId,
+                      RName=ro.RName,
+                      UName=u.UName,
+                      UAccount=u.UAccount,
+                      UPwd=u.UPwd,
+                      UPhone=u.UPhone,
+                      UState=u.UState,
+                  };
+            var i = p.Where(x => x.UName == name && x.UPwd == pass || x.UPhone == name && x.UPwd == pass || x.UAccount == name && x.UPwd == pass).ToListAsync();
+            return await i;
+        }
+         
     }
 }
