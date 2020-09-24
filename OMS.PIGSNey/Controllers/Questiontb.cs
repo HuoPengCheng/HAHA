@@ -31,7 +31,7 @@ namespace OMS.PIGSNey.Controllers
 
         }
         [HttpGet]
-        //维修工单
+        维修工单
         [Route("WeiXui")]
         public async Task<ActionResult<IEnumerable<string>>> WeiXui()
         {
@@ -40,12 +40,12 @@ namespace OMS.PIGSNey.Controllers
             int c = db.UserRepairsDetailstb.Where(x => x.State == 3).Count();
             int d = db.UserRepairsDetailstb.Where(x => x.State == 4).Count();
 
-          
-            string respon = "";
+
+            //string respon = "";
 
         }
-  
-       
+
+
 
     }
 }
