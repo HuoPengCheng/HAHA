@@ -106,7 +106,7 @@ namespace OMS.PIGSNey.Controllers
                            State = r.State,
                            UrdId=r.UrdId
                        };
-            list = list.Where(p => p.UId == uid && p.State !=0);
+            list = list.Where(p => p.UId == uid && p.State >=0);
             if (dangqianye <= 1)
             {
                 dangqianye = 1;
@@ -199,9 +199,13 @@ namespace OMS.PIGSNey.Controllers
         /// 超级管理员
         /// </summary>
         /// <returns></returns>
-        public FenYe<UserInfotb> ChaoJi(int dangqianye = 1, int meiyetiaoshu = 5)
+        public FenYe<UserInfotb> ChaoJi(string name="",int dangqianye = 1, int meiyetiaoshu = 5)
         {
             var list = from u in db.UserInfotb select u;
+            if (!string.IsNullOrEmpty(name))
+            {
+                list = list.Where(p => p.UName.Contains(name));
+            }
             if (dangqianye <= 1)
             {
                 dangqianye = 1;
@@ -253,6 +257,17 @@ namespace OMS.PIGSNey.Controllers
             return await db.SaveChangesAsync();
         }
         /// <summary>
+        /// 解冻账户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>> ZhuangTai5(int id)
+        {
+            UserInfotb b = db.UserInfotb.Find(id);
+            b.UState = 1;
+            return await db.SaveChangesAsync();
+        }
+        /// <summary>
         /// 修改客户密码
         /// </summary>
         /// <param name="id"></param>
@@ -272,7 +287,6 @@ namespace OMS.PIGSNey.Controllers
             {
                 return 0;
             }
-            
             
         }
         /// <summary>
