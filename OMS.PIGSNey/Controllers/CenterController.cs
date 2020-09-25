@@ -298,29 +298,50 @@ namespace OMS.PIGSNey.Controllers
         {
             UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id2);
             b.State = 2;
-            return await db.SaveChangesAsync();
+            int i = db.SaveChanges();
+            if (i>0)
+            {
+                UserInfotb u1 = db.UserInfotb.Find(id);
+                Prompttb m = new Prompttb();
+                m.PromptContent = "您的订单"+b.Ordernumber+"已被接受，当前维修员是" + u1.UName+"手机号码是"+u1.UPhone;
+                m.PromptTime = DateTime.Now;
+                m.UId = b.UId;
+                m.UrdId = id2;
+                db.prompttb.Add(m);
+                return await db.SaveChangesAsync();
+            }
+            else
+            {
+                return 0;
+            }
+
         }
-        /// <summary>
-        /// 维修员维修
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ActionResult<int>> ZhuangTai3(int id)
-        {
-            UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
-            b.State = 3;
-            return await db.SaveChangesAsync();
-        }
+
         /// <summary>
         /// 维修员维完成
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> ZhuangTai4(int id)
+        public async Task<ActionResult<int>> ZhuangTai4(int id,int uid)
         {
             UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id);
             b.State = 4;
-            return await db.SaveChangesAsync();
+            int i = db.SaveChanges();
+            if (i > 0)
+            {
+                UserInfotb u1 = db.UserInfotb.Find(uid);
+                Prompttb m = new Prompttb();
+                m.PromptContent = "您的订单" + b.Ordernumber + "已完成，当前维修员是" + u1.UName + "手机号码是" + u1.UPhone;
+                m.PromptTime = DateTime.Now;
+                m.UId = b.UId;
+                m.UrdId = id;
+                db.prompttb.Add(m);
+                return await db.SaveChangesAsync();
+            }
+            else
+            {
+                return 0;
+            }
         }
         /// <summary>
         /// 客户删除
