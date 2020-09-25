@@ -254,12 +254,12 @@ namespace OMS.PIGSNey.Controllers
             /// <returns></returns>   
 
             [Route("AddAF")]
-        public async Task<ActionResult<int>> AddAF([FromBody] ApplyFortb a)
+        public async Task<ActionResult<int>> AddAF(int maid, int MaterialAmount,int id)
         {
             ApplyFortb af = new ApplyFortb();
-            af.MAId = a.MAId;
-            af.MaterialAmount = a.MaterialAmount;
-            af.UId = a.UId;
+            af.MAId = maid;
+            af.MaterialAmount = MaterialAmount;
+            af.UId = id;
             af.AStatic = 0;
             af.AppDate = DateTime.Now;
             db.ApplyFortb.Add(af);
@@ -271,11 +271,11 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="at"></param>
         /// <returns></returns>
         [Route("AddAT")]
-        public async Task<ActionResult<int>> AddAT([FromBody] AddTool at)
+        public async Task<ActionResult<int>> AddAT(int id,int tid)
         {
             AddTool at1 = new AddTool();
-            at1.TId = at.TId;
-            at1.UId = at.UId;
+            at1.TId = tid;
+            at1.UId =id;
             at1.AStatic = 0;
             at1.AppDate = DateTime.Now;
             db.AddTool.Add(at1);
