@@ -349,7 +349,7 @@ namespace OMS.PIGSNey.Controllers
         public int PrompttbShow(int UId)
         {
             var linq = db.prompttb.Where(x => x.UId == UId);
-            int i = linq.Where(x => x.PromptSet == 0).Count();
+            int i = linq.Where(x => x.PromptSet == 0).Count()  ;
             return i;
         }
 
