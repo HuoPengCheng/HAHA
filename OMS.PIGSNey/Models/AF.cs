@@ -16,6 +16,7 @@ namespace OMS.PIGSNey.Models
         //AStatic = a.AStatic
         public int AId { get; set; }
 
+        public int MAId { get; set; }
         public string MaterialName { get; set; }
 
         public int MaterialAmount { get; set; }
