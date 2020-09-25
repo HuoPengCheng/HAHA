@@ -22,6 +22,7 @@ namespace OMS.PIGSNey.Controllers
             this.db = db;
         }
 
+
         #region 类别（下拉框）
 
         [Route("GetCategory")]
