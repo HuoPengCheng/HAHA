@@ -39,7 +39,7 @@ namespace OMS.PIGSNey.Controllers
                            State=r.State,
                            Marque=r.Marque
                        };
-            list = list.Where(p => p.UId == uid);
+            list = list.Where(p => p.UId == 12);
             if (!string.IsNullOrEmpty(name))
             {
                 list = list.Where(p => p.Marque.Contains(name));
@@ -106,7 +106,7 @@ namespace OMS.PIGSNey.Controllers
                            State = r.State,
                            UrdId=r.UrdId
                        };
-            list = list.Where(p => p.UId == uid && p.State >=0);
+            list = list.Where(p => p.UId == 9 && p.State >=0);
             if (dangqianye <= 1)
             {
                 dangqianye = 1;
@@ -253,7 +253,7 @@ namespace OMS.PIGSNey.Controllers
         public async Task<ActionResult<int>> ZhuangTai1(int id )
         {
             UserInfotb b = db.UserInfotb.Find(id);
-            b.UState = 0;
+            b.UState = 2;
             return await db.SaveChangesAsync();
         }
         /// <summary>
@@ -298,8 +298,6 @@ namespace OMS.PIGSNey.Controllers
         {
             UserRepairsDetailstb b = db.UserRepairsDetailstb.Find(id2);
             b.State = 2;
-            UserInfotb c = db.UserInfotb.Find(id);
-            c.UState = 2;
             return await db.SaveChangesAsync();
         }
         /// <summary>
