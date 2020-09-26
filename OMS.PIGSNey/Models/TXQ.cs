@@ -22,12 +22,6 @@ namespace OMS.PIGSNey.Models
 
         public string UName { get; set; }
 
-        public string Marque { get; set; }
-
-        public string Type { get; set; }
-
-        public int State { get; set; }
-
         public string UPhone { get; set; }
 
         public DateTime AuditToolDate { get; set; }

@@ -22,6 +22,7 @@ namespace OMS.PIGSNey.Controllers
             this.db = db;
         }
 
+
         #region 类别（下拉框）
 
         [Route("GetCategory")]
@@ -29,6 +30,38 @@ namespace OMS.PIGSNey.Controllers
         {
             var list = from c in db.Category select c;
             return await db.Category.ToListAsync();
+        }
+
+        #endregion
+
+        #region 材料下拉框（材料名称）
+
+        [Route("GetMaterials")]
+        public async Task<ActionResult<IEnumerable<Materialstb>>> GetMaterials()
+        {
+            var list = from m in db.Materialstb 
+                       select new Materialstb
+                       {
+                            MAId=m.MAId,
+                            MaterialName = m.MaterialName
+                        };
+            return await db.Materialstb.ToListAsync();
+        }
+
+        #endregion
+
+        #region 工具下拉框（工具名称）
+
+        [Route("GetTool")]
+        public async Task<ActionResult<IEnumerable<Tooltb>>> GetTool()
+        {
+            var list = from t in db.Tooltb
+                       select new Tooltb
+                       {
+                           TId = t.TId,
+                           ToolName = t.ToolName
+                       };
+            return await db.Tooltb.ToListAsync();
         }
 
         #endregion
@@ -55,9 +88,11 @@ namespace OMS.PIGSNey.Controllers
                         join u in db.UserInfotb on a.UId equals u.UId
                         join m in db.Materialstb on a.MAId equals m.MAId
                         orderby a.AppDate descending
+                        where a.AStatic == 0
                         select new AF
                         {
                             AId = a.AId,
+                            MAId=m.MAId,
                             MaterialName = m.MaterialName,
                             MaterialAmount = a.MaterialAmount,
                             UName = u.UName,
@@ -83,7 +118,7 @@ namespace OMS.PIGSNey.Controllers
             fenYeAF.Zongtiaoshu = count;
             fenYeAF.Zongyeshu = totalpage;
             fenYeAF.Dangqianye = pageIndex;
-            fenYeAF.masd = list.Skip(pageIndex * pageSize).Take(pageSize).ToList();
+            fenYeAF.masd = list.Skip((pageIndex-1) * pageSize).Take(pageSize).ToList();
 
             return fenYeAF;
         }
@@ -111,6 +146,7 @@ namespace OMS.PIGSNey.Controllers
                         join u in db.UserInfotb on at.UId equals u.UId
                         join t in db.Tooltb on at.TId equals t.TId
                         orderby at.AppDate descending
+                        where at.AStatic == 0
                         select new AT
                         {
                             ATId = at.ATId,
@@ -136,7 +172,7 @@ namespace OMS.PIGSNey.Controllers
             fenYeAT.Zongtiaoshu = count;
             fenYeAT.Zongyeshu = totalpage;
             fenYeAT.Dangqianye = pageIndex;
-            fenYeAT.masd = list.Skip(pageIndex * pageSize).Take(pageSize).ToList();
+            fenYeAT.masd = list.Skip((pageIndex-1) * pageSize).Take(pageSize).ToList();
 
             return fenYeAT;
         }
@@ -152,31 +188,34 @@ namespace OMS.PIGSNey.Controllers
         /// <returns></returns>
 
         [Route("UpdAf")]
-        public async Task<ActionResult<int>> UpdAf(int AId,int AStatic,int MAId,int MAmount)
+        public async Task<ActionResult<int>> UpdAf(int AId,int MAId)
         {
             
             ApplyFortb af = db.ApplyFortb.Find(AId);
             af.AStatic = 1;
+            int num = af.MaterialAmount;
             db.Entry(af).State = EntityState.Modified;
-            if (Convert.ToInt32(db.SaveChangesAsync())!=1)
+           
+                //修改仓库数量
+                Materialstb m = db.Materialstb.Where(m => m.MAId == MAId).FirstOrDefault();
+            if (m.MAmount<=num)
             {
                 return 0;
             }
             else
             {
-                //修改仓库数量
-            Materialstb m = new Materialstb();
-            var list = db.Materialstb.Where(m => m.MAId == MAId).FirstOrDefault();
-            list.MAmount -= MAmount;
-            db.Materialstb.Update(list);
+                m.MAmount -= num;
+                db.Materialstb.Update(m);
 
                 //添加审核领取表领取时间
                 Audit a = new Audit();
-            a.AId = AId;
-            a.AuditDate = DateTime.Now;
-            db.Audit.Add(a);
-            return await db.SaveChangesAsync();
+                a.AId = AId;
+                a.AuditDate = DateTime.Now;
+                db.Audit.Add(a);
+                return await db.SaveChangesAsync();
             }
+               
+            
         }
 
         /// <summary>
@@ -186,21 +225,22 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="AStatic"></param>
         /// <returns></returns>
        [Route("UpdAT")]
-        public async Task<ActionResult<int>> UpdAT(int ATId, int AStatic)
+        public async Task<ActionResult<int>> UpdAT(int ATId)
         {
-            try
-            {
+           
                 AddTool at = db.AddTool.Find(ATId);
                 at.AStatic = 1;
                 db.Entry(at).State = EntityState.Modified;
-               
-            }
-            catch (Exception ex)
-            {
 
-                Console.WriteLine(ex.Message);
-            }
+            //添加审核领取表领取时间
+            AuditTool aut = new AuditTool();
+            aut.ATId = ATId;
+            aut.AuditToolDate = DateTime.Now;
+            db.AuditTool.Add(aut);
+           
+
             return await db.SaveChangesAsync();
+            
         }
 
         #endregion
@@ -214,12 +254,12 @@ namespace OMS.PIGSNey.Controllers
             /// <returns></returns>   
 
             [Route("AddAF")]
-        public async Task<ActionResult<int>> AddAF([FromBody] ApplyFortb a)
+        public async Task<ActionResult<int>> AddAF(int maid, int MaterialAmount,int id)
         {
             ApplyFortb af = new ApplyFortb();
-            af.MAId = a.MAId;
-            af.MaterialAmount = a.MaterialAmount;
-            af.UId = a.UId;
+            af.MAId = maid;
+            af.MaterialAmount = MaterialAmount;
+            af.UId = id;
             af.AStatic = 0;
             af.AppDate = DateTime.Now;
             db.ApplyFortb.Add(af);
@@ -231,11 +271,11 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="at"></param>
         /// <returns></returns>
         [Route("AddAT")]
-        public async Task<ActionResult<int>> AddAT([FromBody] AddTool at)
+        public async Task<ActionResult<int>> AddAT(int id,int tid)
         {
             AddTool at1 = new AddTool();
-            at1.TId = at.TId;
-            at1.UId = at.UId;
+            at1.TId = tid;
+            at1.UId =id;
             at1.AStatic = 0;
             at1.AppDate = DateTime.Now;
             db.AddTool.Add(at1);
@@ -261,7 +301,7 @@ namespace OMS.PIGSNey.Controllers
             {
                 pageIndex = 1;
             }
-            var list = ((from m in db.Materialstb
+            var list = (from m in db.Materialstb
                         join c in db.Category on m.CategoryId equals c.CId
                         select new Ma
                         {
@@ -272,7 +312,7 @@ namespace OMS.PIGSNey.Controllers
                             CName = c.CName,
                             MAmount = m.MAmount,
                             MImg = m.MImg
-                        })).ToList();
+                        }).ToList();
             if (!string.IsNullOrEmpty(MaterialName))
             {
                 list = list.Where(a => a.MaterialName.Contains(MaterialName)).ToList();
@@ -299,7 +339,34 @@ namespace OMS.PIGSNey.Controllers
         }
 
         /// <summary>
-        /// 根据MAId进行反填，修改材料表数据（材料采购）
+        /// 根据ID进行反填
+        /// </summary>
+        /// <param name="MAId"></param>
+        /// <returns></returns>
+        [Route("GetMAterialById")]
+        public async Task<ActionResult<IEnumerable<Ma>>> GetMAterialById(int MAId)
+        {
+            var list = (from m in db.Materialstb
+                        join c in db.Category on m.CategoryId equals c.CId
+                        select new Ma
+                        {
+                            MAId = m.MAId,
+                            MaterialName = m.MaterialName,
+                            MSpecification = m.MSpecification,
+                            CId = c.CId,
+                            CName = c.CName,
+                            MAmount = m.MAmount,
+                            MImg = m.MImg
+                        });
+            if (MAId!=0)
+            {
+                list = list.Where(s => s.MAId == MAId);
+            }
+            return await list.ToListAsync();
+        }
+
+        /// <summary>
+        /// ，修改材料表数据（材料采购）
         /// </summary>
         /// <param name="MaId"></param>
         /// <param name="MAmount"></param>
@@ -314,8 +381,10 @@ namespace OMS.PIGSNey.Controllers
         }
 
         #endregion
-
+        
         #region 查询工具显示
+        [Route("ToolShow")]
+        
         public FenYe<TS> ToolShow(string ToolName="", int pageIndex = 1, int pageSize = 2)
         {
             if (pageIndex < 1)
@@ -328,6 +397,7 @@ namespace OMS.PIGSNey.Controllers
                         {
                             TId = t.TId,
                             ToolName = t.ToolName,
+                            TSpecification=t.TSpecification,
                             Img = t.Img
                         });
             if (!string.IsNullOrEmpty(ToolName))
@@ -344,7 +414,7 @@ namespace OMS.PIGSNey.Controllers
             fenYeTS.Zongtiaoshu = count;
             fenYeTS.Zongyeshu = totalpage;
             fenYeTS.Dangqianye = pageIndex;
-            fenYeTS.masd = list.Skip(pageIndex * pageSize).Take(pageSize).ToList();
+            fenYeTS.masd = list.Skip((pageIndex-1) * pageSize).Take(pageSize).ToList();
 
             return fenYeTS;
         }
@@ -379,7 +449,7 @@ namespace OMS.PIGSNey.Controllers
                         };
             if (MAId!=0)
             {
-                list = list.Where(m => m.MAId == MAId);
+                list = list.Where(m => m.MAId == MAId).Take(10);
             }
             return await list.ToListAsync();
         }
@@ -390,30 +460,27 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="TId"></param>
         /// <returns></returns>
         [Route("GetUseTool")]
+        //FenYe<AF> ApplyFortbShow(string MaterialName = "", string UName = "", int pageIndex = 1, int pageSize = 2)
         public async Task<ActionResult<IEnumerable<TXQ>>> GetUseTool(int TId)
         {
             var list = from t in db.Tooltb
                        join at in db.AddTool on t.TId equals at.TId
                        join a in db.AuditTool on at.ATId equals a.ATId
                        join u in db.UserInfotb on at.UId equals u.UId
-                       join md in db.MaintenanceDetailstb on u.UId equals md.UId
-                       join ud in db.UserRepairsDetailstb on md.URDId equals ud.UrdId
-                       orderby a.AuditToolDate descending
+                       orderby a.AuditToolDate descending 
                        select new TXQ
                        {
                            TId = t.TId,
                            UName = u.UName,
-                           Marque = ud.Marque,
-                           Type = ud.Type,
-                           State = ud.State,
                            UPhone = u.UPhone,
                            AuditToolDate = a.AuditToolDate,
                            ToolName = t.ToolName
                        };
             if (TId !=0)
             {
-                list = list.Where(s => s.TId == TId);
+                list = list.Where(s => s.TId == TId).Take(10);
             }
+           
             return await list.ToListAsync();
         }
         #endregion

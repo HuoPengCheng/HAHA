@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OMS.PIGSNey.Models
 {
-    public class Prompttb
+    public class ViewModelPrompttb
     {
         [Key]
         public int PRId { get; set; }
@@ -14,6 +14,9 @@ namespace OMS.PIGSNey.Models
         public DateTime PromptTime { get; set; }
         public int UId { get; set; }
         public int UrdId { get; set; }
-        public int PromptSet { get; set; }
+        //订单编号自增
+        public string Ordernumber { get; set; }
+        //姓名
+        public string UName { get; set; }
     }
 }
