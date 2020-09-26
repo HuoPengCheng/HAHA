@@ -2,39 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using OMS.PIGSNey.Models;
-using Microsoft.AspNetCore.Cors;
 
 namespace OMS.PIGSNey.Controllers
 {
-    //数据报表——API
     [Route("api/[controller]")]
     [ApiController]
-    //问卷查看---作者/李达凯
-    public class Questiontb : ControllerBase
+    public class ShuJuBaoBiaoController : ControllerBase
     {
         public OMSContext db;
-        public Questiontb(OMSContext db) { this.db = db; }
+        public ShuJuBaoBiaoController(OMSContext db)
+        {
+            this.db = db;
+        }
         //查看问卷
-       [HttpGet]
-        [Route("question")]
-        //连接意见投诉模块，添加问卷
-        public async Task<ActionResult<IEnumerable<wenjuan>>>  wenjuan()
+        //有数据
+        [HttpGet]
+        [Route ("WenJuan")]
+        public async Task<ActionResult<IEnumerable<wenjuan>>> WenJuan()
         {
             {
-                var list = db.Wenjuans;              
+                var list = db.Wenjuans;
                 return await list.ToListAsync();
             }
-
-
         }
         [HttpGet]
         //维修工单
-        [Route("WeiXui")]
-        public string WeiXui()
+        //有数据
+        [Route("WeiXiu")]
+        public string WeiXiu()
         {
             //分为四种状态：未审核、未维修、已完成、维修中
             //连接UserRepairsDetailstb（用户报修信息详情表）
@@ -44,12 +43,27 @@ namespace OMS.PIGSNey.Controllers
             int d = db.UserRepairsDetailstb.Where(x => x.State == 4).Count();
             //然后在前台使用切割，返回
             //通过JSON返回String值
-            string respon = a.ToString()+','+b.ToString()+','+c.ToString()+','+d.ToString();
-            return  respon;
+            string respon = a.ToString() + ',' + b.ToString() + ',' + c.ToString() + ',' + d.ToString();
+            return respon;
         }
-
         //JS星级评分
-        
+        //[HttpGet]
+        //[Route ("complaints")]
+        //[Obsolete]
+        //public List<Complaintb>ShowXingJi(int pageIndex = 1, int pageSize = 10)
+        //{
 
+
+        //}
+        //public async Task<ActionResult<int>> AddComplaints(string comment)
+        //{
+        //    Complaintb complaintb = new Complaintb()
+        //    {
+        //        Comment = comment,
+
+        //    };    
+        //    db.Complaintb.Add(complaintb);
+        //    return await db.SaveChangesAsync();
+        //}
     }
 }
