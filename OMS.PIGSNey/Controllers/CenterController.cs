@@ -42,7 +42,7 @@ namespace OMS.PIGSNey.Controllers
             list = list.Where(p => p.UId == uid);
             if (!string.IsNullOrEmpty(name))
             {
-                list = list.Where(p => p.Type.Contains(name));
+                list = list.Where(p => p.Marque.Contains(name));
             }
             if (dangqianye < 1)
             {
@@ -103,9 +103,10 @@ namespace OMS.PIGSNey.Controllers
                            UPhone = u.UPhone,
                            Type = r.Type,
                            Reason = r.Reason,
-                           State = r.State
+                           State = r.State,
+                           UrdId=r.UrdId
                        };
-            list = list.Where(p => p.UId == uid && p.State !=0);
+            list = list.Where(p => p.UId == uid && p.State >=0);
             if (dangqianye <= 1)
             {
                 dangqianye = 1;
@@ -125,12 +126,24 @@ namespace OMS.PIGSNey.Controllers
                 dangqianye = page;
             }
 
-            FenYe<KeHuXianshi> k = new FenYe<KeHuXianshi>();
-            k.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
-            k.Dangqianye = dangqianye;
-            k.Zongtiaoshu = zongtiaoshu;
-            k.Zongyeshu = page;
-            return k;
+            if (zongtiaoshu == 0)
+            {
+                FenYe<KeHuXianshi> p = new FenYe<KeHuXianshi>();
+
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
+            else
+            {
+                FenYe<KeHuXianshi> p = new FenYe<KeHuXianshi>();
+                p.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
 
         }
         /// <summary>
@@ -186,9 +199,51 @@ namespace OMS.PIGSNey.Controllers
         /// 超级管理员
         /// </summary>
         /// <returns></returns>
-        public async Task<ActionResult<IEnumerable<UserInfotb>>> ChaoJi(string acount)
+        public FenYe<UserInfotb> ChaoJi(string name="",int dangqianye = 1, int meiyetiaoshu = 5)
         {
-            return await db.UserInfotb.ToListAsync();
+            var list = from u in db.UserInfotb select u;
+            if (!string.IsNullOrEmpty(name))
+            {
+                list = list.Where(p => p.UName.Contains(name));
+            }
+            if (dangqianye <= 1)
+            {
+                dangqianye = 1;
+            }
+            var zongtiaoshu = list.Count();
+            int page;
+            if (zongtiaoshu % meiyetiaoshu == 0)
+            {
+                page = zongtiaoshu / meiyetiaoshu;
+            }
+            else
+            {
+                page = zongtiaoshu / meiyetiaoshu + 1;
+            }
+            if (dangqianye >= page)
+            {
+                dangqianye = page;
+            }
+
+            if (zongtiaoshu == 0)
+            {
+                FenYe<UserInfotb> p = new FenYe<UserInfotb>();
+
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
+            else
+            {
+                FenYe<UserInfotb> p = new FenYe<UserInfotb>();
+                p.masd = list.Skip((dangqianye - 1) * meiyetiaoshu).Take(meiyetiaoshu).ToList();
+                p.Zongtiaoshu = zongtiaoshu;
+                p.Zongyeshu = page;
+                p.Dangqianye = dangqianye;
+                return p;
+            }
+
         }
         /// <summary>
         /// 冻结账户
@@ -202,16 +257,37 @@ namespace OMS.PIGSNey.Controllers
             return await db.SaveChangesAsync();
         }
         /// <summary>
+        /// 解冻账户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>> ZhuangTai5(int id)
+        {
+            UserInfotb b = db.UserInfotb.Find(id);
+            b.UState = 1;
+            return await db.SaveChangesAsync();
+        }
+        /// <summary>
         /// 修改客户密码
         /// </summary>
         /// <param name="id"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public async Task<ActionResult<int>> KeHuPwd(int id, string pwd)
+        public async Task<ActionResult<int>> KeHuPwd(int id, string jpwd,string xpwd)
         {
-            UserInfotb b = db.UserInfotb.Find(id);
-            b.UPwd = pwd;
-            return await db.SaveChangesAsync();
+            var list = from y in db.UserInfotb where y.UPwd==jpwd select y;
+            int i = list.Count();
+            if (i>0)
+            {
+                UserInfotb b = db.UserInfotb.Find(id);
+                b.UPwd = xpwd;
+                return await db.SaveChangesAsync();
+            }
+            else
+            {
+                return 0;
+            }
+            
         }
         /// <summary>
         /// 维修员接单
@@ -258,5 +334,31 @@ namespace OMS.PIGSNey.Controllers
             db.UserRepairsDetailstb.Remove(db.UserRepairsDetailstb.Find(id));
             return await db.SaveChangesAsync();
         }
+        /// <summary>
+        /// 反填
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<IEnumerable<UserInfotb>>>Fan(int id)
+        {
+            var list = from u in db.UserInfotb select u;
+            list = list.Where(p => p.UId == id);
+            return await list.ToListAsync();
+        }
+        /// <summary>
+        /// 修改资料
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="phone"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<int>>ZL(int id,string name,string phone)
+        {
+            UserInfotb b = db.UserInfotb.Find(id);
+            b.UName = name;
+            b.UPhone = phone;
+            return await db.SaveChangesAsync();
+        }
+
     }
 }

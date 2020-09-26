@@ -38,6 +38,7 @@ namespace OMS.PIGSNey.Models
 
 
         public DbSet<AuditTool> AuditTool { get; set; }
+        public DbSet<Jurisdiction> Jurisdiction { get; set; }
 
 
     }
