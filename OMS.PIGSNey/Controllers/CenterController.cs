@@ -101,6 +101,7 @@ namespace OMS.PIGSNey.Controllers
             if (dangqianye <= 1)
             {
                 dangqianye = 1;
+
             }
             var zongtiaoshu = list.Count();
             int page;
