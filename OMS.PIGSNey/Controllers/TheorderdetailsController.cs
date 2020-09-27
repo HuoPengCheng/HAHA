@@ -39,7 +39,8 @@ namespace OMS.PIGSNey.Controllers
                            Address = u.Address,
                            Date = u.Date,
                            State = u.State,
-                           DetailedAddress = u.DetailedAddress
+                           DetailedAddress = u.DetailedAddress,
+                           Img = u.Img
                        };
             linq = linq.Where(p => p.UId == UId);
             if (!string.IsNullOrEmpty(Name))
@@ -325,7 +326,7 @@ namespace OMS.PIGSNey.Controllers
 
         [HttpGet]
         [Route("api/AddUserRepairsDetailstb")]
-        public int AddUserRepairsDetailstb(string Type,string Marque,string Cause,string Reason,string Address,string DetailedAddress,int UId)
+        public int AddUserRepairsDetailstb(string Type,string Marque,string Cause,string Reason,string Address,string DetailedAddress,int UId,string Img)
         {
             UserRepairsDetailstb m1 = (from a in db.UserRepairsDetailstb orderby a.UrdId descending select a).FirstOrDefault();
 
@@ -341,6 +342,7 @@ namespace OMS.PIGSNey.Controllers
             m.Date = DateTime.Now;
             m.UId = UId;
             m.State = 0;
+            m.Img = "/Img/"+Img;
             db.UserRepairsDetailstb.Add(m);
             return db.SaveChanges();
         }

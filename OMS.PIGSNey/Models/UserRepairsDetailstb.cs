@@ -33,5 +33,6 @@ namespace OMS.PIGSNey.Models
         public int UId { get; set; }
         //状态
         public int State { get; set; }
+        public string Img { get; set; }
     }
 }
