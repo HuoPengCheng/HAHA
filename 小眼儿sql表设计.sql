@@ -64,6 +64,7 @@ Date varchar(50),
 UId int,
 State int
 )
+select * from UserRepairsDetailstb
 --drop table UserRepairsDetailstb
 --维修商品类别表
 create table CommodityDetailstb
@@ -72,6 +73,7 @@ CId int primary key identity,
 CName varchar(50),
 CPId int
 )
+select * from CommodityDetailstb where CPId=0
 --drop table CommodityDetailstb
 --维修员维修详情表
 create table MaintenanceDetailstb
