@@ -18,5 +18,8 @@ namespace OMS.PIGSNey.Models
         public string UName { get; set; }
 
         public DateTime AppDate { get; set; }
+
+
+        public int AStatic { get; set; }
     }
 }
