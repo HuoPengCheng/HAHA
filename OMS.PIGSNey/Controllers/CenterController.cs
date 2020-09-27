@@ -357,6 +357,7 @@ namespace OMS.PIGSNey.Controllers
                 m.PromptTime = DateTime.Now;
                 m.UId = b.UId;
                 m.UrdId = id2;
+                m.PromptSet = 0;
                 db.prompttb.Add(m);
                 return await db.SaveChangesAsync();
             }
@@ -384,6 +385,7 @@ namespace OMS.PIGSNey.Controllers
                 m.PromptTime = DateTime.Now;
                 m.UId = b.UId;
                 m.UrdId = id;
+                m.PromptSet = 0;
                 db.prompttb.Add(m);
                 return await db.SaveChangesAsync();
             }

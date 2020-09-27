@@ -44,5 +44,8 @@ namespace OMS.PIGSNey.Models
         public int State { get; set; }
         public int MId { get; set; }
 
+        public int JDan { get; set; }
+
+
     }
 }
