@@ -13,6 +13,7 @@ namespace OMS.PIGSNey.Models
         public int TId { get; set; }
 
         public string ToolName { get; set; }
+        public string TSpecification { get; set; }
 
         public string Img { get; set; }
     }
