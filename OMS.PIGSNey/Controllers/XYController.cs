@@ -22,7 +22,7 @@ namespace OMS.PIGSNey.Controllers
             this.db = db;
         }
 
-
+        
         #region 类别（下拉框）
 
         [Route("GetCategory")]
@@ -178,6 +178,157 @@ namespace OMS.PIGSNey.Controllers
         }
 
         #endregion
+       
+        #region  材料/工具驳回显示
+        [HttpGet]
+        [Route("ApplyFortbShowBO")]
+        public async Task<ActionResult<IEnumerable<AF>>> ApplyFortbShowBO( )
+        {
+            var list = (from a in db.ApplyFortb
+                        join u in db.UserInfotb on a.UId equals u.UId
+                        join m in db.Materialstb on a.MAId equals m.MAId
+                        orderby a.AppDate descending
+                        where a.AStatic == 2
+                        
+                        select new AF
+                        {
+                            AId = a.AId,
+                            MAId = m.MAId,
+                            MaterialName = m.MaterialName,
+                            MaterialAmount = a.MaterialAmount,
+                            UName = u.UName,
+                            AppDate = a.AppDate,
+                            AStatic = a.AStatic
+                        });
+            list = list.Take(50);
+
+            return await list.ToListAsync();
+        }
+
+        [Route("AddToolbo")]
+        public async Task<ActionResult<IEnumerable<AT>>>  AddToolbo()
+        {
+           
+            var list = (from at in db.AddTool
+                        join u in db.UserInfotb on at.UId equals u.UId
+                        join t in db.Tooltb on at.TId equals t.TId
+                        orderby at.AppDate descending
+                        where at.AStatic==2
+                        select new AT
+                        {
+                            ATId = at.ATId,
+                            ToolName = t.ToolName,
+                            UName = u.UName,
+                            AppDate = at.AppDate,
+                            AStatic=at.AStatic
+                        });
+            list = list.Take(50);
+
+            return await list.ToListAsync();
+        }
+
+
+        #endregion
+
+        #region  审核通过显示（材料/工具）
+
+        [Route("ApplyFortbShowTong")]
+        public async Task<ActionResult<IEnumerable<AF>>> ApplyFortbShowTong()
+        {
+            var list = (from a in db.ApplyFortb
+                        join u in db.UserInfotb on a.UId equals u.UId
+                        join m in db.Materialstb on a.MAId equals m.MAId
+                        orderby a.AppDate descending
+                        where a.AStatic == 1
+
+                        select new AF
+                        {
+                            AId = a.AId,
+                            MAId = m.MAId,
+                            MaterialName = m.MaterialName,
+                            MaterialAmount = a.MaterialAmount,
+                            UName = u.UName,
+                            AppDate = a.AppDate,
+                            AStatic = a.AStatic
+                        });
+            list = list.Take(50);
+
+            return await list.ToListAsync();
+        }
+
+        [Route("AddToolTong")]
+        public async Task<ActionResult<IEnumerable<AT>>> AddToolTong()
+        {
+
+            var list = (from at in db.AddTool
+                        join u in db.UserInfotb on at.UId equals u.UId
+                        join t in db.Tooltb on at.TId equals t.TId
+                        orderby at.AppDate descending
+                        where at.AStatic == 1
+                        select new AT
+                        {
+                            ATId = at.ATId,
+                            ToolName = t.ToolName,
+                            UName = u.UName,
+                            AppDate = at.AppDate,
+                            AStatic = at.AStatic
+                        });
+            list = list.Take(50);
+
+            return await list.ToListAsync();
+        }
+
+        #endregion
+
+        #region 显示所有记录（材料/工具）
+        [Route("ApplyFortbShowAll")]
+        public async Task<ActionResult<IEnumerable<AF>>> ApplyFortbShowAll()
+        {
+            var list = (from a in db.ApplyFortb
+                        join u in db.UserInfotb on a.UId equals u.UId
+                        join m in db.Materialstb on a.MAId equals m.MAId
+                        orderby a.AppDate descending
+                       
+
+                        select new AF
+                        {
+                            AId = a.AId,
+                            MAId = m.MAId,
+                            MaterialName = m.MaterialName,
+                            MaterialAmount = a.MaterialAmount,
+                            UName = u.UName,
+                            AppDate = a.AppDate,
+                            AStatic = a.AStatic
+                        });
+            list = list.Take(50);
+
+            return await list.ToListAsync();
+        }
+
+        [Route("AddToolAll")]
+        public async Task<ActionResult<IEnumerable<AT>>> AddToolAll()
+        {
+
+            var list = (from at in db.AddTool
+                        join u in db.UserInfotb on at.UId equals u.UId
+                        join t in db.Tooltb on at.TId equals t.TId
+                        orderby at.AppDate descending
+                       
+                        select new AT
+                        {
+                            ATId = at.ATId,
+                            ToolName = t.ToolName,
+                            UName = u.UName,
+                            AppDate = at.AppDate,
+                            AStatic = at.AStatic
+                        });
+            list = list.Take(50);
+
+            return await list.ToListAsync();
+        }
+
+
+        #endregion
 
         #region 审核
 
@@ -245,21 +396,54 @@ namespace OMS.PIGSNey.Controllers
 
         #endregion
 
+        #region 驳回
+        /// <summary>
+        /// 材料驳回
+        /// </summary>
+        /// <param name="AId"></param>
+        /// <returns></returns>
+        [Route("UpdAfBO")]
+        public async Task<ActionResult<int>> UpdAfBO(int AId)
+        {
+
+            ApplyFortb af = db.ApplyFortb.Find(AId);
+            af.AStatic = 2;
+            db.Entry(af).State = EntityState.Modified;
+            
+            return await db.SaveChangesAsync();
+
+        }
+
+        [Route("UpdATBo")]
+        public async Task<ActionResult<int>> UpdATBo(int ATId)
+        {
+
+            AddTool at = db.AddTool.Find(ATId);
+            at.AStatic = 2;
+            db.Entry(at).State = EntityState.Modified;
+
+
+            return await db.SaveChangesAsync();
+
+        }
+
+        #endregion
+
         #region 申请
 
-            /// <summary>
-            /// 材料申请
-            /// </summary>
-            /// <param name="a"></param>
-            /// <returns></returns>   
+        /// <summary>
+        /// 材料申请
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>   
 
-            [Route("AddAF")]
-        public async Task<ActionResult<int>> AddAF(int maid, int MaterialAmount,int id)
+        [Route("AddAF")]
+        public async Task<ActionResult<int>> AddAF([FromBody] ApplyFortb a)
         {
             ApplyFortb af = new ApplyFortb();
-            af.MAId = maid;
-            af.MaterialAmount = MaterialAmount;
-            af.UId = id;
+            af.MAId = a.MAId;
+            af.MaterialAmount = a.MaterialAmount;
+            af.UId = a.UId;
             af.AStatic = 0;
             af.AppDate = DateTime.Now;
             db.ApplyFortb.Add(af);
@@ -271,11 +455,11 @@ namespace OMS.PIGSNey.Controllers
         /// <param name="at"></param>
         /// <returns></returns>
         [Route("AddAT")]
-        public async Task<ActionResult<int>> AddAT(int id,int tid)
+        public async Task<ActionResult<int>> AddAT([FromBody] AddTool at)
         {
             AddTool at1 = new AddTool();
-            at1.TId = tid;
-            at1.UId =id;
+            at1.TId = at.TId;
+            at1.UId = at.UId;
             at1.AStatic = 0;
             at1.AppDate = DateTime.Now;
             db.AddTool.Add(at1);
