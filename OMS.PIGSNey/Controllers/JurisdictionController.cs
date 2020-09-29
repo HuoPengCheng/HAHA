@@ -8,6 +8,7 @@ using OMS.PIGSNey.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace OMS.PIGSNey.Controllers
 {
@@ -24,11 +25,11 @@ namespace OMS.PIGSNey.Controllers
         
         [HttpGet]
         [Route("api/Denglu")]
-        public async Task<ActionResult<int>> Denglu(string name,string pass)
+        public int Denglu(string name,string pass)
         {
-            db.UserInfotb.FirstOrDefault(x => x.UName == name).ToString();
-            db.UserInfotb.FirstOrDefault(x => x.UPwd == pass).ToString();
-            return await db.SaveChangesAsync();
+            
+            int i =  db.UserInfotb.Where(x => x.UName == name && x.UPwd == pass || x.UPhone == name && x.UPwd == pass || x.UAccount == name && x.UPwd == pass).Count();
+            return i;
         }
         [Route("api/UserShow")]
         [HttpGet]
@@ -50,13 +51,14 @@ namespace OMS.PIGSNey.Controllers
         }
         [Route("api/PageUserShow")]
         [HttpGet]
-        public FenYe<Jurisdiction> PageUserShow(int PageSize = 3, int CurrPage = 1)
+        public FenYe<Jurisdiction> GLYGetURD(string Name = "",string sjh="",string zh="", int PageSize = 5, int CurrPage = 1)
         {
-              var linq=from ro in db.Roletb join
+           var linq=from ro in db.Roletb join
                   u in db.UserInfotb on
                   ro.RId equals u.RId
                   select new Jurisdiction
                   {
+                      UId=u.UId,
                       RName=ro.RName,
                       UName=u.UName,
                       UAccount=u.UAccount,
@@ -64,30 +66,211 @@ namespace OMS.PIGSNey.Controllers
                       UPhone=u.UPhone,
                       UState=u.UState,
                   };
+
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                linq = linq.Where(x => x.UName.Contains(Name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(sjh))
+            {
+                linq = linq.Where(x => x.UAccount.Contains(sjh));
+            }
+
+            if (!string.IsNullOrWhiteSpace(zh))
+            {
+                linq = linq.Where(x => x.UPhone.Contains(zh));
+            }
             if (CurrPage < 1)
             {
                 CurrPage = 1;
             }
-            int totalcount = linq.ToList().Count();
-            int totalpage;
-            if (totalcount % PageSize == 0)
+            int TotalCount = linq.Count();
+            int TotalPage = 0;
+            if (TotalCount % PageSize == 0)
             {
-                totalpage = totalcount / PageSize;
+                TotalPage = TotalCount / PageSize;
             }
             else
             {
-                totalpage = totalcount / PageSize + 1;
+                TotalPage = TotalCount / PageSize + 1;
             }
-            if (CurrPage > totalpage)
-            {
-                CurrPage = totalpage;
-            }
-            FenYe<Jurisdiction> p1 = new FenYe<Jurisdiction>();
-            p1.masd = linq.Skip(PageSize * (CurrPage - 1)).Take(PageSize).ToList();
-            p1.Zongyeshu = CurrPage;
-            p1.Zongtiaoshu = totalcount;
-            p1.Dangqianye = totalpage;
-            return p1;
+            FenYe<Jurisdiction> p = new FenYe<Jurisdiction>();
+            p.masd = linq.Skip(PageSize * (CurrPage - 1)).Take(PageSize).ToList();
+            p.Zongtiaoshu = TotalCount;
+            p.Zongyeshu = TotalPage;
+            p.Dangqianye = CurrPage;
+            return p;
         }
+
+        [HttpDelete]
+        [Route("api/gai")]
+        public int Gai(int id)
+        {
+            UserInfotb u = db.UserInfotb.FirstOrDefault(x => x.UId == id);
+            if (u.UState==1)
+            {
+                u.UState = 2;
+            }
+            else
+            {
+                u.UState = 1;
+            }
+            return  db.SaveChanges();
+        }
+
+        [HttpGet]
+        [Route("api/Session")]
+        public async Task<ActionResult<IEnumerable<Jurisdiction>>> Session(string name,string pass)
+        {
+            var p=from ro in db.Roletb join
+                  u in db.UserInfotb on
+                  ro.RId equals u.RId
+                  select new Jurisdiction
+                  {
+                      UId=u.UId,
+                      RName=ro.RName,
+                      RId=ro.RId,
+                      UName=u.UName,
+                      UAccount=u.UAccount,
+                      UPwd=u.UPwd,
+                      UPhone=u.UPhone,
+                      UState=u.UState,
+                  };
+            var i = p.Where(x => x.UName == name && x.UPwd == pass || x.UPhone == name && x.UPwd == pass || x.UAccount == name && x.UPwd == pass).ToListAsync();
+            return await i;
+        }
+         
+        //public int Add(string name,string uAccount,string upwd,string uphone,int rid,int ustate)
+        //{
+        //    UserInfotb u = new UserInfotb();
+        //    u.UName = name;
+        //    u.UAccount = uAccount;
+        //    u.UPwd = upwd;
+        //    u.UPhone = uphone;
+        //    u.RId = 4;
+        //    u.UState = 1;
+        //    db.Add(u);
+        //    return db.SaveChanges();
+
+
+        //}
+        
+        [HttpGet]
+        [Route("api/qx")]
+        public async Task<ActionResult<IEnumerable<Jurisdiction>>> Qx(string name,string pass)
+        {
+            var linq=from ro in db.Roletb join
+                  j in db .Juristb on
+                  ro.RId equals j.RId
+                  select new Jurisdiction
+                  {
+                      RName=ro.RName,
+                      JId=j.JId,
+                      RId=j.RId,
+                      JAdd=j.JAdd,
+                      JDel=j.JDel,
+                      JShow=j.JShow,
+                      JUpt=j.JUpt,
+
+                  };
+
+
+            return await linq.ToListAsync();
+        }
+
+        [HttpGet]
+        [Route("api/Moban")]
+        public async Task<ActionResult<IEnumerable<Qx>>> Lindex(int rid)
+        {
+            if (rid==1)
+            {
+                 var linq=from ro in db.Roletb join
+                  c in db .Cjtb on
+                  ro.RId equals c.RId
+                  join p in db.Permissionspage on
+                  c.PId equals p.PId
+                  select new Qx
+                  {
+                      PId=p.PId,
+                      RName=ro.RName,
+                      PName=p.PName,
+
+                  };
+                return await linq.ToListAsync();
+
+            }
+            else if(rid==2)
+            {
+                var linq = from ro in db.Roletb
+                           join c in db.Gjtb on
+                            ro.RId equals c.RId
+                           join p in db.GPermission on
+                           c.GId equals p.GPId
+                           select new Qx
+                           {
+                               PId = p.GPId,
+                               RName = ro.RName,
+                               PName = p.PName,
+
+                           };
+                return await linq.ToListAsync();
+            }
+            else if (rid==3)
+            {
+                 var linq=from ro in db.Roletb join
+                  c in db .Wxtb on
+                  ro.RId equals c.rid
+                  join p in db.WPermission on
+                  c.wid equals p.WId
+                  select new Qx
+                  {
+                      PId = p.WId,
+                      RName =ro.RName,
+                      PName = p.PName,
+                  };
+                return await linq.ToListAsync();
+            }
+             else 
+            {
+                 var linq=from ro in db.Roletb join
+                  c in db .Khtb on
+                  ro.RId equals c.RId
+                  join p in db.YPermission on
+                  c.KId equals p.PYId
+                  select new Qx
+                  {
+                      PId = p.PYId,
+                      RName =ro.RName,
+                      PName = p.PName,
+                  };
+                return await linq.ToListAsync();
+            }
+           
+
+        }
+        [HttpGet]
+        [Route("api/ej")]
+        public async Task<ActionResult<IEnumerable<Qx>>> eji(int id)
+        {
+
+                 var linq=from ro in db.Roletb join
+                  c in db .Cjtb on
+                  ro.RId equals c.RId
+                  join p in db.Permissionspage on
+                  c.PId equals p.Id where p.Id==id
+                  select new Qx
+                  {
+                      RName=ro.RName,
+                      PName=p.PName,
+                      Url=p.Url,
+
+                  };
+ 
+                return await linq.ToListAsync();
+
+        }
+        
+
     }
 }

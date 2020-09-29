@@ -25,6 +25,7 @@ namespace OMS.PIGSNey.Models
         public int RId { get; set; }
         //状态
         public int UState { get; set; }
+        public int JDan { get; set; }
 
     }
 }

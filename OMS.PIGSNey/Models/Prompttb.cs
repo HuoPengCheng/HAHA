@@ -14,5 +14,6 @@ namespace OMS.PIGSNey.Models
         public DateTime PromptTime { get; set; }
         public int UId { get; set; }
         public int UrdId { get; set; }
+        public int PromptSet { get; set; }
     }
 }

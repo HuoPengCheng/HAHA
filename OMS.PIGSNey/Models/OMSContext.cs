@@ -37,8 +37,19 @@ namespace OMS.PIGSNey.Models
         public DbSet<xuanxiang> Xuanxiangs { get; set; }
 
 
+
         public DbSet<AuditTool> AuditTool { get; set; }
+        public DbSet<Jurisdiction> Jurisdiction { get; set; }
+        public DbSet<Cjtb> Cjtb { get; set; }
+        public DbSet<Permissionspage> Permissionspage { get; set; }
+        public DbSet<Gjtb> Gjtb { get; set; }
+        public DbSet<GPermission> GPermission { get; set; }
+        public DbSet<Wxtb> Wxtb { get; set; }
+        public DbSet<WPermission> WPermission { get; set; }
+        public DbSet<Khtb> Khtb { get; set; }
+        public DbSet<YPermission> YPermission { get; set; }
+        public DbSet<Qx> Qx { get; set; }
 
-
+        
     }
 }
