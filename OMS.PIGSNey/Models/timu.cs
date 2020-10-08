@@ -16,6 +16,6 @@ namespace OMS.PIGSNey.Models
         //题目标题
         public string biaoti { get; set; }
         //问卷id
-        public string wj_id { get; set; }
+        public int wj_id { get; set; }
     }
 }

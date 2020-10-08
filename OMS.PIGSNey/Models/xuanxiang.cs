@@ -16,8 +16,8 @@ namespace OMS.PIGSNey.Models
         //选项内容
         public string xuanxiangneirong { get; set; }
         //票数
-        public string piaoshu { get; set; }
+        public int piaoshu { get; set; }
         //题目id
-        public string tm_id { get; set; }
+        public int tm_id { get; set; }
     }
 }
