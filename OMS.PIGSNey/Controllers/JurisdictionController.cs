@@ -251,9 +251,27 @@ namespace OMS.PIGSNey.Controllers
         }
         [HttpGet]
         [Route("api/ej")]
-        public async Task<ActionResult<IEnumerable<Qx>>> eji(int id)
+        public async Task<ActionResult<IEnumerable<Qx>>> eji(int rid,int id)
         {
+            if (rid==4)
+            {
+                 var linq=from ro in db.Roletb join
+                  c in db .Cjtb on
+                  ro.RId equals c.RId
+                  join p in db.Permissionspage on
+                  c.PId equals p.Id where p.Id==id && p.SId==1
+                  select new Qx
+                  {
+                      RName=ro.RName,
+                      PName=p.PName,
+                      Url=p.Url,
 
+                  };
+ 
+                return await linq.ToListAsync();
+            }
+            else
+            {
                  var linq=from ro in db.Roletb join
                   c in db .Cjtb on
                   ro.RId equals c.RId
@@ -268,6 +286,9 @@ namespace OMS.PIGSNey.Controllers
                   };
  
                 return await linq.ToListAsync();
+            }
+
+                
 
         }
         

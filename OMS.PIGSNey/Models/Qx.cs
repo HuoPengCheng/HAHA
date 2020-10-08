@@ -17,7 +17,7 @@ namespace OMS.PIGSNey.Models
         public int KId { get; set; }
 
 
-
+        public int SId { get; set; }
         public string WName { get; set; }
         public int WFId { get; set; }
 
