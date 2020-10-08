@@ -295,24 +295,24 @@ namespace OMS.PIGSNey.Controllers
         [Route("api/GetResponse")]
         public List<ViewModelPrompttb> GetResponse(int UId)
         {
-            
+
             var linq = from a in db.UserInfotb
-                      join b in db.prompttb
-                      on a.UId equals b.UId
-                      join c in db.UserRepairsDetailstb
-                      on b.UrdId equals c.UrdId
-                      where b.UId.Equals(UId)
-                      orderby b.PromptTime descending
-                      select new ViewModelPrompttb
-                      {
-                          PRId = b.PRId,
-                          PromptContent = b.PromptContent,
-                          PromptTime = b.PromptTime,
-                          UId = b.UId,
-                          UrdId = b.UrdId,
-                          Ordernumber=c.Ordernumber,
-                          UName = a.UName,
-                      };
+                       join b in db.prompttb
+                       on a.UId equals b.UId
+                       join c in db.UserRepairsDetailstb
+                       on b.UrdId equals c.UrdId
+                       where b.UId.Equals(UId)
+                       orderby b.PromptTime descending
+                       select new ViewModelPrompttb
+                       {
+                           PRId = b.PRId,
+                           PromptContent = b.PromptContent,
+                           PromptTime = b.PromptTime,
+                           UId = b.UId,
+                           UrdId = b.UrdId,
+                           Ordernumber = c.Ordernumber,
+                           UName = a.UName,
+                       };
             var pro = db.prompttb.Where(x => x.UId == UId).ToList();
             for (int i = 0; i < pro.Count(); i++)
             {
@@ -326,12 +326,12 @@ namespace OMS.PIGSNey.Controllers
 
         [HttpGet]
         [Route("api/AddUserRepairsDetailstb")]
-        public int AddUserRepairsDetailstb(string Type,string Marque,string Cause,string Reason,string Address,string DetailedAddress,int UId,string Img)
+        public int AddUserRepairsDetailstb(string Type, string Marque, string Cause, string Reason, string Address, string DetailedAddress, int UId, string Img)
         {
             UserRepairsDetailstb m1 = (from a in db.UserRepairsDetailstb orderby a.UrdId descending select a).FirstOrDefault();
 
             UserRepairsDetailstb m = new UserRepairsDetailstb();
-            m.Ordernumber = "XY2009-" + (m1.UrdId+1);
+            m.Ordernumber = "XY2009-" + (m1.UrdId + 1);
             m.Type = Type;
             m.Marque = Marque;
             m.Degree = 1;
@@ -342,7 +342,7 @@ namespace OMS.PIGSNey.Controllers
             m.Date = DateTime.Now;
             m.UId = UId;
             m.State = 0;
-            m.Img = "/Img/"+Img;
+            m.Img = "/Img/" + Img;
             db.UserRepairsDetailstb.Add(m);
             return db.SaveChanges();
         }
@@ -351,10 +351,53 @@ namespace OMS.PIGSNey.Controllers
         public int PrompttbShow(int UId)
         {
             var linq = db.prompttb.Where(x => x.UId == UId);
-            int i = linq.Where(x => x.PromptSet == 0).Count()  ;
+            int i = linq.Where(x => x.PromptSet == 0).Count();
             return i;
         }
 
+        [HttpGet]
+        [Route("api/GetFt")]
+        public List<ViewModelUserRepairsDetailstb> GetFt(int UrdId)
+        {
+            var linq = from a in db.UserInfotb
+                       join b in db.MaintenanceDetailstb
+                       on a.UId equals b.UId
+                       join c in db.UserRepairsDetailstb
+                       on b.URDId equals c.UrdId
+                       where c.UrdId == UrdId
+                       select new ViewModelUserRepairsDetailstb
+                       {
+                           UrdId=c.UrdId,
+                           Ordernumber = c.Ordernumber,
+                           Type = c.Type,
+                           Marque = c.Marque,
+                           Degree = c.Degree,
+                           Cause = c.Cause,
+                           Reason = c.Reason,
+                           Address = c.Address,
+                           DetailedAddress = c.DetailedAddress,
+                           Date = c.Date,
+                           UId = c.UId,
+                           State = c.State,
+                           UName=a.UName
+                       };
+            return linq.ToList();
+        }
+
+        [HttpGet]
+        [Route("api/AddComplaintb")]
+        public int AddComplaintb(string Ordernumber,string UName1,string UName2,string Comment,string Img)
+        { 
+            Complaintb m = new Complaintb();
+            m.Ordernumber = Ordernumber;
+            m.UName1 = UName1;
+            m.UName2 = UName2;
+            m.Comment = Comment;
+            m.Img = "/Img/" + Img;
+            m.State = 0;
+            db.Complaintb.Add(m);
+            return db.SaveChanges();
+        }
 
 
     }
